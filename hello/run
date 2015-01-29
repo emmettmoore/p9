@@ -1,0 +1,5 @@
+5c -o /mnt/term/p9/hello/hello.5 /mnt/term/p9/hello/hello.c
+5l -o /mnt/term/p9/hello/hello /mnt/term/p9/hello/hello.5
+/mnt/term/p9/hello/hello
+rm /mnt/term/p9/hello/hello.5
+rm /mnt/term/p9/hello/hello

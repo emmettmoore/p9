@@ -1,0 +1,3 @@
+5c -o /mnt/term/p9/hello/^$1^.5 /mnt/term/p9/hello/^$1.c
+5l -o /mnt/term/p9/hello/^$1 /mnt/term/p9/hello/^$1^.5
+/mnt/term/p9/hello/^$1
