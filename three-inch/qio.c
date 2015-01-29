@@ -1,9 +1,17 @@
+#include <u.h>
+#include <libc.h>
+#include "stuff.h"
+
+/*
+look in these places for structs, etc.
+to define in stuff.h:
 #include	"u.h"
 #include	"../port/lib.h"
 #include	"mem.h"
 #include	"dat.h"
 #include	"fns.h"
 #include	"../port/error.h"
+*/
 
 static ulong padblockcnt;
 static ulong concatblockcnt;
