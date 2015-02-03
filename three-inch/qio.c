@@ -1,5 +1,4 @@
-#include <u.h>
-#include <libc.h>
+#define THREEINCH
 #include "stuff.h"
 
 /*
