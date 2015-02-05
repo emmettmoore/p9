@@ -1,9 +1,9 @@
-qio.5:
-	5c -o /mnt/term/p9/three-inch/^qio^.5 /mnt/term/p9/three-inch/^qio.c
-
 qio: qio.5
-	echo here
+	5l -o qio qio.5 
 
-# 5l -o /mnt/term/p9/three-inch/^qio /mnt/term/p9/three-inch/^qio^.5 && \
-#	/mnt/term/p9/three-inch/^qio
+qio.5: qio.c
+	5c -o qio.5 qio.c
+
+qio.c: 
+    echo "qio.c not found"
 

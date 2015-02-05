@@ -1545,3 +1545,4 @@ qstate(Queue *q)
 {
 	return q->state;
 }
+

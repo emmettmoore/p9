@@ -438,9 +438,9 @@ extern int	_tas(int*);
 
 #ifndef THREEINCH
 extern	void	lock(Lock*);
-#endif
 extern	void	unlock(Lock*);
 extern	int	canlock(Lock*);
+#endif
 
 typedef struct QLp QLp;
 struct QLp
@@ -461,6 +461,7 @@ struct QLock
 } QLock;
 #endif
 
+#ifndef THREEINCH
 extern	void	qlock(QLock*);
 extern	void	qunlock(QLock*);
 extern	int	canqlock(QLock*);
@@ -476,14 +477,13 @@ struct RWLock
 	QLp	*tail;
 } RWLock;
 
-#ifndef THREEINCH
 extern	void	rlock(RWLock*);
 extern	void	runlock(RWLock*);
 extern	int	canrlock(RWLock*);
 extern	void	wlock(RWLock*);
 extern	void	wunlock(RWLock*);
-#endif
 extern	int	canwlock(RWLock*);
+#endif
 
 #ifndef THREEINCH
 typedef
@@ -493,11 +493,11 @@ struct Rendez
 	QLp	*head;
 	QLp	*tail;
 } Rendez;
-#ifndef THREEINCH
 
 extern	void	rsleep(Rendez*);	/* unlocks r->l, sleeps, locks r->l again */
 extern	int	rwakeup(Rendez*);
 extern	int	rwakeupall(Rendez*);
+#endif
 extern	void**	privalloc(void);
 extern	void	privfree(void**);
 
@@ -601,8 +601,8 @@ extern	void		freenetconninfo(NetConnInfo*);
 #define DMEXEC		0x1		/* mode bit for execute permission */
 
 /* rfork */
-enum
 #ifndef THREEINCH
+enum
 {
 	RFNAMEG		= (1<<0),
 	RFENVG		= (1<<1),
@@ -762,3 +762,4 @@ extern char *argv0;
 
 /* this is used by sbrk and brk,  it's a really bad idea to redefine it */
 extern	char	end[];
+

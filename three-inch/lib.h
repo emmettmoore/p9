@@ -219,3 +219,4 @@ struct Waitmsg
 	ulong	time[3];	/* of loved one and descendants */
 	char	msg[ERRMAX];	/* actually variable-size in user mode */
 };
+

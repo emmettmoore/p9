@@ -118,3 +118,4 @@ void	wbflush(void);
 #define PADDR(a) mmu_paddr((ulong)(a))
 
 #define	waserror()	(up->nerrlab++, setlabel(&up->errlab[up->nerrlab-1]))
+

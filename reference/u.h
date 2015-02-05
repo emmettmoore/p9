@@ -1,3 +1,5 @@
+#define nil             ((void*)0)
+
 typedef	unsigned short	ushort;
 typedef	unsigned char	uchar;
 typedef	unsigned long	ulong;
@@ -62,3 +64,4 @@ typedef	char*	va_list;
 	(sizeof(mode) == 2)?\
 		((list += 4), (mode*)list)[-2]:\
 		((list += sizeof(mode)), (mode*)list)[-1])
+
