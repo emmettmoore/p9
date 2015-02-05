@@ -2,7 +2,7 @@ qio: qio.5
 	5l -o qio qio.5 
 
 qio.5: qio.c
-	5c -o /mnt/term/p9/three-inch/^qio^.5 /mnt/term/p9/three-inch/^qio.c
+	5c -o qio.5 qio.c
 
 qio.c: 
     echo "qio.c not found"
