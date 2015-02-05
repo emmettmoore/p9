@@ -6,3 +6,4 @@
 #include	"dat.h"
 #include	"fns.h" // XXX Why not fns.h?
 #include	"error.h"
+
