@@ -118,7 +118,7 @@ struct Notsave
 	int dummy;
 };
 
-#include "portdat.h" /* FORMERLY ../port/portdat.h -Kernel Sanders XXX*/
+#include "portdat.h" /* XXX FORMERLY ../port/portdat.h XXX*/
 
 struct Mach
 {

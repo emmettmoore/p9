@@ -870,7 +870,7 @@ qwait(Queue *q)
 
 		q->state |= Qstarve;	/* flag requesting producer to wake me */
 		iunlock(q);
-		sleep(&q->rr, notempty, q);
+		sleep(&q->rr, notempty, q); // XXX See stuff.h
 		ilock(q);
 	}
 	return 1;

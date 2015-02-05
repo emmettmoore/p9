@@ -374,7 +374,7 @@ enum
 	SG_PHYSICAL	= 05,
 
 #ifndef THREEINCH
-    /* #define in libc.h:561 -Kernel Sanders XXX */
+    /* #define in libc.h:561 XXX */
 	SG_RONLY	= 0040,		/* Segment is read only */
 	SG_CEXEC	= 0100,		/* Detach at exec */
 #endif
