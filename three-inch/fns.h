@@ -1,4 +1,4 @@
-#include "../port/portfns.h"
+#include "portfns.h"
 
 void	audiopower(int);
 void	audioamppower(int);

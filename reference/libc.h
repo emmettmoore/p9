@@ -691,7 +691,9 @@ extern	int	segflush(void*, ulong);
 extern	int	segfree(void*, ulong);
 extern	int	semacquire(long*, int);
 extern	long	semrelease(long*, long);
-extern	int	sleep(long);
+#ifndef THREEINCH
+//extern	int	sleep(long);
+#endif
 extern	int	stat(char*, uchar*, int);
 extern	int	tsemacquire(long*, ulong);
 extern	Waitmsg*	wait(void);

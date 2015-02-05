@@ -331,9 +331,9 @@ void		setrealloctag(void*, ulong);
 void		setregisters(Ureg*, char*, char*, int);
 void		setswapchan(Chan*);
 char*		skipslash(char*);
-#ifndef THREEINCH
+//#ifndef THREEINCH
 void		sleep(Rendez*, int(*)(void*), void*);
-#endif
+//#endif
 void*		smalloc(ulong);
 int		splhi(void);
 int		spllo(void);
