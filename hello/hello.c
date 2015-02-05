@@ -6,4 +6,3 @@ void main(void) {
     exits(0);
 }
 
-/endif

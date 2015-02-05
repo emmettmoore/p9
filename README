@@ -1,0 +1,7 @@
+Kernel Sanders
+improving concurrent queues for Plan 9/9atom, Tufts CS Senior Capstone Porject
+
+directories:
+9 - source code for the Plan 9 kernel
+hello - hello world program
+three-inch - attempt to isolate qio.c to run in Plan 9 user space
