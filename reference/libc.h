@@ -667,8 +667,10 @@ extern	int	fwstat(int, uchar*, int);
 extern	int	fversion(int, int, char*, int);
 extern	int	mount(int, int, char*, int, char*);
 extern	int	unmount(char*, char*);
+#ifndef THREEINCH
 extern	int	noted(int);
 extern	int	notify(void(*)(void*, char*));
+#endif
 extern	int	open(char*, int);
 extern	int	fd2path(int, char*, int);
 // extern	int	fdflush(int);

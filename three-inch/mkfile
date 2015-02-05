@@ -1,5 +1,9 @@
-all:V:
-	5c -o /mnt/term/p9/three-inch/^qio^.5 /mnt/term/p9/three-inch/^qio.c && \ 
-	5l -o /mnt/term/p9/three-inch/^qio /mnt/term/p9/three-inch/^qio^.5 && \
-	/mnt/term/p9/three-inch/^qio
+qio.5:
+	5c -o /mnt/term/p9/three-inch/^qio^.5 /mnt/term/p9/three-inch/^qio.c
+
+qio: qio.5
+	echo here
+
+# 5l -o /mnt/term/p9/three-inch/^qio /mnt/term/p9/three-inch/^qio^.5 && \
+#	/mnt/term/p9/three-inch/^qio
 
