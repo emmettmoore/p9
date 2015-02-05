@@ -33,7 +33,6 @@ typedef void IntrHandler(Ureg*, void*);
  */
 #define AOUT_MAGIC	(E_MAGIC)
 
-#ifndef THREEINCH
 struct Lock
 {
 	ulong	key;
@@ -43,7 +42,6 @@ struct Lock
 	Mach	*m;
 	ushort	isilock;
 };
-#endif
 
 struct Label
 {

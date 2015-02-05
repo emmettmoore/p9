@@ -284,7 +284,9 @@ extern	double	pow(double, double);
 extern	double	atan2(double, double);
 extern	double	fabs(double);
 extern	double	atan(double);
+#ifndef THREEINCH
 extern	double	log(double);
+#endif
 extern	double	log10(double);
 extern	double	exp(double);
 extern	double	floor(double);
@@ -381,7 +383,9 @@ extern	double	modf(double, double*);
 extern	int	netcrypt(void*, void*);
 extern	void	notejmp(void*, jmp_buf, int);
 extern	void	perror(char*);
+#ifndef THREEINCH
 extern	int	postnote(int, int, char *);
+/endif
 extern	double	pow10(int);
 extern	int	putenv(char*, char*);
 extern	void	qsort(void*, long, long, int (*)(void*, void*));
@@ -392,7 +396,6 @@ extern	ulong	strtoul(char*, char**, int);
 extern	vlong	strtoll(char*, char**, int);
 extern	uvlong	strtoull(char*, char**, int);
 extern	void	sysfatal(char*, ...);
-#pragma	varargck	argpos	sysfatal	1
 extern	void	syslog(int, char*, char*, ...);
 #pragma	varargck	argpos	syslog	3
 extern	long	time(long*);
@@ -423,15 +426,19 @@ int	casl(ulong*, ulong, ulong);
 /*
  *  synchronization
  */
+#ifndef THREEINCH
 typedef
 struct Lock {
 	long	key;
 	long	sem;
 } Lock;
+#endif
 
 extern int	_tas(int*);
 
+#ifndef THREEINCH
 extern	void	lock(Lock*);
+#endif
 extern	void	unlock(Lock*);
 extern	int	canlock(Lock*);
 
@@ -443,6 +450,7 @@ struct QLp
 	char	state;
 };
 
+#ifndef THREEINCH
 typedef
 struct QLock
 {
@@ -451,6 +459,7 @@ struct QLock
 	QLp	*head;
 	QLp 	*tail;
 } QLock;
+#endif
 
 extern	void	qlock(QLock*);
 extern	void	qunlock(QLock*);
@@ -467,13 +476,16 @@ struct RWLock
 	QLp	*tail;
 } RWLock;
 
+#ifndef THREEINCH
 extern	void	rlock(RWLock*);
 extern	void	runlock(RWLock*);
 extern	int	canrlock(RWLock*);
 extern	void	wlock(RWLock*);
 extern	void	wunlock(RWLock*);
+#endif
 extern	int	canwlock(RWLock*);
 
+#ifndef THREEINCH
 typedef
 struct Rendez
 {
@@ -481,6 +493,7 @@ struct Rendez
 	QLp	*head;
 	QLp	*tail;
 } Rendez;
+#ifndef THREEINCH
 
 extern	void	rsleep(Rendez*);	/* unlocks r->l, sleeps, locks r->l again */
 extern	int	rwakeup(Rendez*);
@@ -558,9 +571,10 @@ extern	void		freenetconninfo(NetConnInfo*);
 #define	AREAD	4	/* read access */
 
 /* Segattch */
+#ifndef THREEINCH
 #define	SG_RONLY	0040	/* read only */
 #define	SG_CEXEC	0100	/* detach on exec */
-
+#endif
 #define	NCONT	0	/* continue after note */
 #define	NDFLT	1	/* terminate after note */
 #define	NSAVE	2	/* clear note but hold state */
@@ -588,6 +602,7 @@ extern	void		freenetconninfo(NetConnInfo*);
 
 /* rfork */
 enum
+#ifndef THREEINCH
 {
 	RFNAMEG		= (1<<0),
 	RFENVG		= (1<<1),
@@ -602,6 +617,7 @@ enum
 	RFREND		= (1<<13),
 	RFNOMNT		= (1<<14)
 };
+#endif
 
 typedef
 struct Qid
@@ -686,7 +702,9 @@ extern	int	remove(char*);
 extern	void*	sbrk(ulong);
 extern	long	oseek(int, long, int);
 extern	vlong	seek(int, vlong, int);
+#ifndef THREEINCH
 extern	void*	segattach(int, char*, void*, ulong);
+#endif
 extern	void*	segbrk(void*, void*);
 extern	int	segdetach(void*);
 extern	int	segflush(void*, ulong);
@@ -694,7 +712,7 @@ extern	int	segfree(void*, ulong);
 extern	int	semacquire(long*, int);
 extern	long	semrelease(long*, long);
 #ifndef THREEINCH
-//extern	int	sleep(long);
+extern	int	sleep(long);
 #endif
 extern	int	stat(char*, uchar*, int);
 extern	int	tsemacquire(long*, ulong);
@@ -715,7 +733,9 @@ extern	long	dirreadall(int, Dir**);
 extern	int	getpid(void);
 extern	int	getppid(void);
 extern	void	rerrstr(char*, uint);
+#ifndef THREEINCH
 extern	char*	sysname(void);
+#endif
 extern	void	werrstr(char*, ...);
 #pragma	varargck	argpos	werrstr	1
 

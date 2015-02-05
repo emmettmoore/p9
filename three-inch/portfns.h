@@ -21,9 +21,7 @@ char*		chanpath(Chan*);
 int		canlock(Lock*);
 int		canpage(Proc*);
 int		canqlock(QLock*);
-#ifndef THREEINCH
 int		canrlock(RWlock*);
-#endif
 void		chandevinit(void);
 void		chandevreset(void);
 void		chandevshutdown(void);
@@ -157,17 +155,13 @@ void		ksetenv(char*, char*, int);
 void		kstrcpy(char*, char*, int);
 void		kstrdup(char**, char*);
 long		latin1(Rune*, int);
-#ifndef THREEINCH
 int		lock(Lock*);
-#endif
 void		logopen(Log*);
 void		logclose(Log*);
 char*		logctl(Log*, int, char**, Logflag*);
 void		logn(Log*, int, void*, int);
 long		logread(Log*, void*, ulong, long);
-#ifndef THREEINCH
 void		log(Log*, int, char*, ...);
-#endif
 Cmdtab*		lookupcmd(Cmdbuf*, Cmdtab*, int);
 Page*		lookpage(Image*, ulong);
 #define		MS2NS(n) (((vlong)(n))*1000000LL)
@@ -205,9 +199,7 @@ Pgrp*		newpgrp(void);
 Rgrp*		newrgrp(void);
 Proc*		newproc(void);
 void		nexterror(void);
-#ifndef THREEINCH
 int		notify(Ureg*);
-#endif
 int		nrand(int);
 uvlong		ns2fastticks(uvlong);
 int		okaddr(ulong, ulong, int);
@@ -228,9 +220,7 @@ void		pgrpnote(ulong, char*, long, int);
 void		pio(Segment *, ulong, ulong, Page **);
 #define		poperror()		up->nerrlab--
 void		portcountpagerefs(ulong*, int);
-#ifndef THREEINCH
 int		postnote(Proc*, int, char*, int);
-#endif
 int		pprint(char*, ...);
 int		preempted(void);
 void		prflush(void);
@@ -304,13 +294,9 @@ void		renameuser(char*, char*);
 void		resched(char*);
 void		resrcwait(char*);
 int		return0(void*);
-#ifndef THREEINCH
 void		rlock(RWlock*);
-#endif
 long		rtctime(void);
-#ifndef THREEINCH
 void		runlock(RWlock*);
-#endif
 Proc*		runproc(void);
 void		savefpregs(FPsave*);
 void		sched(void);
@@ -318,9 +304,7 @@ void		scheddump(void);
 void		schedinit(void);
 void		(*screenputs)(char*, int);
 long		seconds(void);
-#ifndef THREEINCH
 ulong		segattach(Proc*, ulong, char *, ulong, ulong);
-#endif
 void		segclock(ulong);
 void		segpage(Segment*, Page*);
 int		setcolor(ulong, ulong, ulong, ulong);
@@ -331,9 +315,7 @@ void		setrealloctag(void*, ulong);
 void		setregisters(Ureg*, char*, char*, int);
 void		setswapchan(Chan*);
 char*		skipslash(char*);
-//#ifndef THREEINCH
 void		sleep(Rendez*, int(*)(void*), void*);
-//#endif
 void*		smalloc(ulong);
 int		splhi(void);
 int		spllo(void);
@@ -381,10 +363,8 @@ void		validstat(uchar*, int);
 void*		vmemchr(void*, int, int);
 Proc*		wakeup(Rendez*);
 int		walk(Chan**, char**, int, int, int*);
-#ifndef THREEINCH
 void		wlock(RWlock*);
 void		wunlock(RWlock*);
-#endif
 void*		xalloc(ulong);
 void*		xallocz(ulong, int);
 void		xfree(void*);

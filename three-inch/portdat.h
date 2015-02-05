@@ -64,7 +64,6 @@ struct Ref
 	long	ref;
 };
 
-#ifndef THREEINCH
 struct Rendez
 {
 	Lock;
@@ -78,7 +77,6 @@ struct QLock
 	Proc	*tail;		/* last process waiting for object */
 	int	locked;		/* flag */
 };
-#endif
 
 struct RWlock
 {
@@ -373,11 +371,8 @@ enum
 	SG_SHARED	= 04,
 	SG_PHYSICAL	= 05,
 
-#ifndef THREEINCH
-    /* #define in libc.h:561 XXX */
 	SG_RONLY	= 0040,		/* Segment is read only */
 	SG_CEXEC	= 0100,		/* Detach at exec */
-#endif
 };
 
 #define PG_ONSWAP	1
@@ -542,7 +537,6 @@ struct Timer
 	Tval	twhen;		/* ns represented in fastticks */
 	Timer	*tnext;
 };
-#ifndef THREEINCH
 enum
 {
 	RFNAMEG		= (1<<0),
@@ -558,7 +552,6 @@ enum
 	RFREND		= (1<<13),
 	RFNOMNT		= (1<<14),
 };
-#endif
 
 /*
  *  process memory segments - NSEG always last !
@@ -779,9 +772,7 @@ extern	Palloc	palloc;
 extern	Queue*	serialoq;
 extern	char*	statename[];
 extern	Image	swapimage;
-#ifndef THREEINCH
 extern	char*	sysname;
-#endif
 extern	uint	qiomaxatomic;
 
 enum
