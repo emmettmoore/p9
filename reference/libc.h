@@ -385,7 +385,7 @@ extern	void	notejmp(void*, jmp_buf, int);
 extern	void	perror(char*);
 #ifndef THREEINCH
 extern	int	postnote(int, int, char *);
-/endif
+#endif
 extern	double	pow10(int);
 extern	int	putenv(char*, char*);
 extern	void	qsort(void*, long, long, int (*)(void*, void*));
