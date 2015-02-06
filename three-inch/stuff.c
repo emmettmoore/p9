@@ -1,6 +1,15 @@
 #define THREEINCH
 #include "stuff.h"
 
+/*
+int Ehungup;
+int up;
+*/
+void main(void) {
+    print("woooo! compiles and links !!!!\n");
+    exits(0);
+}
+
 /* /port/allocb.c */
 void
 freeb(Block *b)
@@ -79,8 +88,8 @@ panic(char *fmt, ...)
 Block*
 allocb(int size)
 {
+	Block *b = nil;
 	/*
-	Block *b;
 
 	 * Check in a process and wait until successful.
 	 * Can still error out of here, though.
@@ -115,7 +124,7 @@ iunlock(Lock *l)
 Proc*
 wakeup(Rendez *r)
 {
-	Proc *p;
+	Proc *p = nil;
     /*
 	int s;
 
@@ -141,4 +150,66 @@ wakeup(Rendez *r)
 
     */
 	return p;
+}
+
+/* /9/port/allocb.c */
+Block*
+iallocb(int size)
+{
+	Block *b = nil;
+    /*
+	static int m1, m2, mp;
+
+	if(ialloc.bytes > conf.ialloc){
+		if((m1++%10000)==0){
+			if(mp++ > 1000){
+				active.exiting = 1;
+				exit(0);
+			}
+			iprint("iallocb: limited %lud/%lud\n",
+				ialloc.bytes, conf.ialloc);
+		}
+		return nil;
+	}
+
+	if((b = _allocb(size)) == nil){
+		if((m2++%10000)==0){
+			if(mp++ > 1000){
+				active.exiting = 1;
+				exit(0);
+			}
+			iprint("iallocb: no memory %lud/%lud\n",
+				ialloc.bytes, conf.ialloc);
+		}
+		return nil;
+	}
+	setmalloctag(b, getcallerpc(&size));
+	b->flag = BINTR;
+
+	ilock(&ialloc);
+	ialloc.bytes += b->lim - b->base;
+	iunlock(&ialloc);
+    */
+	return b;
+}
+
+void
+nexterror(void)
+{
+	
+}
+
+void sched(void)
+{
+    /* slightly simpler than round robin is the "one process only" scheduler */
+}
+/* in a .s file, I believe. Not tryna do that right now */
+int setlabel(Label*)
+{
+    return 0;
+}
+
+void error (char * str)
+{
+    (void) str;
 }
