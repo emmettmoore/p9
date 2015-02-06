@@ -220,7 +220,8 @@ void		pexit(char*, int);
 void		pgrpcpy(Pgrp*, Pgrp*);
 void		pgrpnote(ulong, char*, long, int);
 void		pio(Segment *, ulong, ulong, Page **);
-#define		poperror()		up->nerrlab--
+#define		poperror()	(void)
+//#define		poperror()		up->nerrlab--
 void		portcountpagerefs(ulong*, int);
 int		postnote(Proc*, int, char*, int);
 int		pprint(char*, ...);

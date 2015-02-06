@@ -12,6 +12,7 @@ to define in stuff.h:
 #include	"../port/error.h"
 */
 
+
 void
 iallocsummary(void)
 {
@@ -869,7 +870,7 @@ qwait(Queue *q)
 		if(q->state & Qclosed){
 			if(++q->eof > 3)
 				return -1;
-			if(*q->err && strcmp(q->err, Ehungup) != 0)
+			if(*q->err && strcmp(q->err, "") != 0)
 				return -1;
 			return 0;
 		}
@@ -959,24 +960,26 @@ mem2bl(uchar *p, int len)
 
 	first = nil;
 	l = &first;
+    /*
 	if(waserror()){
 		freeblist(first);
 		nexterror();
 	}
+    */
 	do {
 		n = len;
 		if(n > Maxatomic)
 			n = Maxatomic;
 
 		*l = b = allocb(n);
-		setmalloctag(b, (up->text[0]<<24)|(up->text[1]<<16)|(up->text[2]<<8)|up->text[3]);
+//		setmalloctag(b, (up->text[0]<<24)|(up->text[1]<<16)|(up->text[2]<<8)|up->text[3]);
 		memmove(b->wp, p, n);
 		b->wp += n;
 		p += n;
 		len -= n;
 		l = &b->next;
 	} while(len > 0);
-	poperror();
+//	poperror();
 
 	return first;
 }
@@ -1033,7 +1036,7 @@ qbread(Queue *q, int len)
 	qlock(&q->rlock);
 	if(waserror()){
 		qunlock(&q->rlock);
-		nexterror();
+//		nexterror();
 	}
 
 	ilock(q);
@@ -1042,7 +1045,7 @@ qbread(Queue *q, int len)
 		/* queue closed */
 		iunlock(q);
 		qunlock(&q->rlock);
-		poperror();
+//		poperror();
 		return nil;
 	case -1:
 		/* multiple reads on a closed queue */
@@ -1070,7 +1073,7 @@ qbread(Queue *q, int len)
 	/* restart producer */
 	qwakeup_iunlock(q);
 
-	poperror();
+//	poperror();
 	qunlock(&q->rlock);
 	return nb;
 }
@@ -1098,7 +1101,7 @@ again:
 		/* queue closed */
 		iunlock(q);
 		qunlock(&q->rlock);
-		poperror();
+		//poperror();
 		return 0;
 	case -1:
 		/* multiple reads on a closed queue */
@@ -1156,7 +1159,7 @@ again:
 	/* restart producer */
 	qwakeup_iunlock(q);
 
-	poperror();
+	//poperror();
 	qunlock(&q->rlock);
 	return n;
 }
@@ -1211,7 +1214,7 @@ qbwrite(Queue *q, Block *b)
 			freeb(b);
 			noblockcnt += n;
 			qunlock(&q->wlock);
-			poperror();
+	//		poperror();
 			return n;
 		}
 	}
@@ -1244,8 +1247,8 @@ qbwrite(Queue *q, Block *b)
 		p = wakeup(&q->rr);
 
 		/* if we just wokeup a higher priority process, let it run */
-		if(p != nil && p->priority > up->priority)
-			sched();
+//		if(p != nil && p->priority > up->priority)
+//			sched();
 	}
 
 	/*
@@ -1272,7 +1275,7 @@ qbwrite(Queue *q, Block *b)
 	USED(b);
 
 	qunlock(&q->wlock);
-	poperror();
+	//poperror();
 	return n;
 }
 
@@ -1296,13 +1299,13 @@ qwrite(Queue *q, void *vp, int len)
 			n = Maxatomic;
 
 		b = allocb(n);
-		setmalloctag(b, (up->text[0]<<24)|(up->text[1]<<16)|(up->text[2]<<8)|up->text[3]);
+//		setmalloctag(b, (up->text[0]<<24)|(up->text[1]<<16)|(up->text[2]<<8)|up->text[3]);
 		if(waserror()){
 			freeb(b);
 			nexterror();
 		}
 		memmove(b->wp, p+sofar, n);
-		poperror();
+		//poperror();
 		b->wp += n;
 
 		qbwrite(q, b);
@@ -1407,7 +1410,7 @@ qclose(Queue *q)
 	ilock(q);
 	q->state |= Qclosed;
 	q->state &= ~(Qflow|Qstarve);
-	strcpy(q->err, Ehungup);
+	strcpy(q->err, "");
 	bfirst = q->bfirst;
 	q->bfirst = 0;
 	q->len = 0;
@@ -1434,7 +1437,7 @@ qhangup(Queue *q, char *msg)
 	ilock(q);
 	q->state |= Qclosed;
 	if(msg == 0 || *msg == 0)
-		strcpy(q->err, Ehungup);
+		strcpy(q->err, "");
 	else
 		strncpy(q->err, msg, ERRMAX-1);
 	iunlock(q);
