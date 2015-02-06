@@ -128,7 +128,9 @@ long		hostdomainwrite(char*, int);
 long		hostownerwrite(char*, int);
 void		hzsched(void);
 Block*		iallocb(int);
+#ifndef THREEINCH
 void		iallocsummary(void);
+#endif
 long		ibrk(ulong, int);
 void		ilock(Lock*);
 void		iunlock(Lock*);

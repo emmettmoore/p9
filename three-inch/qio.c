@@ -12,6 +12,12 @@ to define in stuff.h:
 #include	"../port/error.h"
 */
 
+void
+iallocsummary(void)
+{
+	print("iallocsummary\n");
+}
+
 static ulong padblockcnt;
 static ulong concatblockcnt;
 static ulong pullupblockcnt;

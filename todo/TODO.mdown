@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <title>Kernel Sanders Project Notes </title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+
+# Kernel Sanders Project Notes
+
+## Our Plan
+
+### Get it to Compile and Link
+-	Undefined Function
+    1.  Not hugely substantial
+    2.  Leaving blank functions in stuff.c. Compiling separately from qio.c, but linking with it later in mkfile.
+-   Undefined Externals
+    1.  Probably a huge pain in the ass. 
+    2.  Have to simualte ever single global variable referenced from qio.c
+-   Need to define a main routine
+    1.  Not hard, obviously the last step as well. 
+    2.  This will mark the end of the "let's get it to compile" stage and start the "lets simulate a test environment on the original file" stage
+
+### Simulate a Test Environment
+-   Make the nonsensical functions and simulated global variables make sense.
+-   Don't change qio.c.
+-   Once we can queue stuff, in a test environment we are comfortable with, we can start to change qio.c
+
+### Update qio.c With New Algorithm
+-   profile it yo!
+
+### Put it Back into the Kernel
+-   6 inches beeyottch
+
+- [Example][1] 
+
+
+</body>
+</html>
+[1]: http://www.example.com/ "Example"

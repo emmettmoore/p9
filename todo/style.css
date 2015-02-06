@@ -1,0 +1,110 @@
+body {
+    font-family: Helvetica, Sans Ms, Charcoal, sans-serif; 
+    font-size: 11pt;
+    background-color: #FFFFF2;
+}
+
+h1 {
+	font-family: Helvetica, serif;
+    font-size: 3.7em;
+	color: #D9543A;
+	text-align: center;
+}
+h2 {
+	font-size: 2.0em;
+	color: #0090FF;
+	text-align: left;
+}
+
+h3 {
+	font-size: 1.2em;
+	color: #000099;
+	text-align: left;
+	margin-bottom: 0.5em;
+}
+
+h4 {
+    font-size: 0.8em;
+	color: #0090FF;
+	text-align: left;
+}
+
+blockquote {
+	font-style: italic;
+}
+
+.plain-text {
+	font-style: normal;
+}
+
+#report-body {
+	text-align: left;
+	font-size: 1.0em;
+	position: relative;
+	padding-left: 100px;
+	padding-right: 100px;
+}
+
+#wcited {
+	text-align: left;
+	font-size: 1.0em;
+	position: relative;
+	left: 15px;
+	font-family: Times New Roman, serif;
+}
+
+
+ul.nav-bar
+{
+	text-align: center;
+	list-style-type:none;
+	margin:0;
+	padding:0;
+	overflow:hidden;
+
+}
+
+li.nav-bar
+{
+	text-align: center;
+	float:left;
+	position:relative;
+	left: 440px;
+}
+
+#header {
+	font-family: Helvetica, serif;
+    font-size: 1.0em;
+	color: #0090FF;
+	text-align: center;
+}
+
+a.nav-bar:link,a.nav-bar:visited
+{
+	display:block;
+	width:170px;
+    font-weight:bold;
+	color:#FFFFF2;
+    background-color:#00F060;
+    text-align:center;
+	padding:4px;
+    text-decoration:none;
+    text-transform:uppercase;
+}
+
+a.nav-bar:hover,a.nav-bar:active
+{
+	color:#00F060;
+    background-color:#FFFFF2;
+    postion: relative;
+    left: 200px;
+}
+
+.small-text {
+
+	font-size: 0.8em;
+}
+pre, code { 
+    font-family consolas, courier, monospace;
+    font-size: 0.95em;
+}
