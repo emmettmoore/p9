@@ -1,10 +1,6 @@
 #define THREEINCH
 #include "stuff.h"
 
-/*
-int Ehungup;
-int up;
-*/
 void main(void) {
     print("woooo! compiles and links !!!!\n");
     exits(0);
