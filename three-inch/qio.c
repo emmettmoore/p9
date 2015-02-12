@@ -1,6 +1,13 @@
 #define THREEINCH
 #include "stuff.h"
 
+/* XXX Added to qio.c */
+
+char Ehungup[30] = "i/o on hungup channel";
+Proc *up; 
+
+/* /added to qio.c */
+
 /*
 look in these places for structs, etc.
 to define in stuff.h:

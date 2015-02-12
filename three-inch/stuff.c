@@ -2,7 +2,16 @@
 #include "stuff.h"
 
 /*
-int Ehungup;
+Ehungup[0] = 'T';
+Ehungup[1] = 'e';
+Ehungup[2] = 's';
+Ehungup[3] = 't';
+Ehungup[4] = '\0';
+*/
+
+
+
+/*
 int up;
 */
 void main(void) {
