@@ -21,7 +21,7 @@ extern char Eio[];		/* i/o error */
 extern char Etoobig[];		/* read or write too large */
 extern char Etoosmall[];	/* read or write too small */
 extern char Enoport[];		/* network port not available */
-extern char Ehungup[];		/* i/o on hungup channel */
+//extern char Ehungup[];		/* i/o on hungup channel */
 extern char Ebadctl[];		/* bad process or channel control request */
 extern char Enodev[];		/* no free devices */
 extern char Eprocdied[];	/* process exited */

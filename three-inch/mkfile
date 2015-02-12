@@ -1,10 +1,7 @@
 qio: qio.5
 	5l -o qio qio.5 stuff.5
 
-qio.5: qio.c
+qio.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib.h dat.h portdat.h
 	5c -o qio.5 qio.c
     5c -o stuff.5 stuff.c
-
-qio.c: 
-    echo "qio.c not found"
 
