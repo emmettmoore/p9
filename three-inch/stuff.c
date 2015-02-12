@@ -1,15 +1,6 @@
 #define THREEINCH
 #include "stuff.h"
 
-/*
-Ehungup[0] = 'T';
-Ehungup[1] = 'e';
-Ehungup[2] = 's';
-Ehungup[3] = 't';
-Ehungup[4] = '\0';
-*/
-
-
 
 /*
 int up;
