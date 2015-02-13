@@ -1,26 +1,29 @@
-typedef struct Cisdat 		Cisdat;
-typedef struct Conf		Conf;
+typedef struct Cisdat 	Cisdat;
+typedef struct Conf	Conf;
 typedef struct Confmem	Confmem;
-typedef struct FPU		FPU;
-typedef struct FPenv		FPenv;
-typedef struct FPsave		FPsave;
-typedef struct DevConf		DevConf;
-typedef struct Label		Label;
-typedef struct Lock		Lock;
-typedef struct MMU		MMU;
-typedef struct Mach		Mach;
-typedef struct Notsave		Notsave;
-typedef struct Page		Page;
-typedef struct PCMmap		PCMmap;
-typedef struct PCMslot		PCMslot;
+typedef struct FPU	FPU;
+typedef struct FPenv	FPenv;
+typedef struct FPsave	FPsave;
+typedef struct DevConf	DevConf;
+typedef struct Label	Label;
+typedef struct Lock	Lock;
+typedef struct MMU	MMU;
+typedef struct Mach	Mach;
+typedef int		Mpl;
+typedef u32int		Mreg;
+typedef struct Notsave	Notsave;
+typedef struct Page	Page;
+typedef struct PCMmap	PCMmap;
+typedef struct PCMslot	PCMslot;
 typedef struct PCMconftab	PCMconftab;
-typedef struct PhysUart		PhysUart;
-typedef struct PMMU		PMMU;
-typedef struct Proc		Proc;
-typedef struct Uart		Uart;
-typedef struct Ureg		Ureg;
-typedef struct Vctl		Vctl;
+typedef struct PhysUart	PhysUart;
+typedef struct PMMU	PMMU;
+typedef struct Proc	Proc;
+typedef struct Uart	Uart;
+typedef struct Ureg	Ureg;
+typedef struct Vctl	Vctl;
 typedef long		Tval;
+typedef ulong		uintmem;
 
 #pragma incomplete Ureg
 
@@ -57,6 +60,9 @@ enum
 	FPinit,
 	FPactive,
 	FPinactive,
+
+	/* bit or'd with the state */
+	FPillegal= 0x100,
 };
 struct	FPsave
 {
@@ -86,10 +92,11 @@ struct Conf
 	int	nswppo;		/* max # of pageouts per segment pass */
 	ulong	copymode;	/* 0 is copy on write, 1 is copy on reference */
 	int	monitor;
-	ulong	ialloc;		/* bytes available for interrupt time allocation */
+	uint	ialloc;		/* bytes available for interrupt time allocation */
 	ulong	pipeqsize;	/* size in bytes of pipe queues */
 	ulong	hz;		/* processor cycle freq */
 	ulong	mhz;
+	int	postdawn;	/* mutiprogramming on */
 };
 
 /*
@@ -116,7 +123,7 @@ struct Notsave
 	int dummy;
 };
 
-#include "portdat.h" /* XXX FORMERLY ../port/portdat.h XXX*/
+#include "./portdat.h" /* XXX formerly ../port/portdat.h */
 
 struct Mach
 {

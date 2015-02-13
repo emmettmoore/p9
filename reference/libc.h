@@ -417,11 +417,13 @@ extern	void	prof(void (*fn)(void*), void *arg, int entries, int what);
 /*
  * atomic
  */
+#ifndef THREEINCH
 long	ainc(long*);
 long	adec(long*);
 int	cas32(u32int*, u32int, u32int);
 int	casp(void**, void*, void*);
 int	casl(ulong*, ulong, ulong);
+#endif
 
 /*
  *  synchronization

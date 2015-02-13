@@ -1,5 +1,7 @@
-#include "portfns.h"
+#include "./portfns.h" /* XXX formerly ../port/portfns.h */
 
+int	adec(int*);
+int	ainc(int*);
 void	audiopower(int);
 void	audioamppower(int);
 void	audioicpower(int);
@@ -7,7 +9,7 @@ void	cacheflush(void);
 void	cachewb(void);
 void	cachewbaddr(void*);
 void	cachewbregion(ulong, int);
-ulong	cankaddr(ulong);
+uintptr	cankaddr(uintmem);
 void	dcacheinvalidate(void);
 int	cistrcmp(char*, char*);
 int	cistrncmp(char*, char*, int);
@@ -23,7 +25,6 @@ void	deepsleep(void);
 void	dmainit(void);
 void	doze(void);
 void	egpiobits(ulong, int);
-void	evenaddr(ulong);
 ulong findva(ulong, ulong, ulong);
 void	flashprogpower(int);
 void	flushmmu(void);
@@ -100,7 +101,6 @@ uchar*	tarlookup(uchar*, char*, int*);
 void	timersinit(void);
 void	timeradd(Timer*);
 void	timerdel(Timer*);
-void	timerset(Tval);
 void	touser(void*);
 void	trapdump(char *tag);
 void	trapinit(void);
@@ -111,6 +111,7 @@ int	uartstageoutput(Uart*);
 void	uartkick(void*);
 void	uartrecv(Uart*, char);
 #define	userureg(ur)	(((ur)->psr & PsrMask) == PsrMusr)
+void	validalign(uintptr, uint);
 void	vectors(void);
 void	vtable(void);
 void	wbflush(void);
@@ -119,3 +120,5 @@ void	wbflush(void);
 
 #define	waserror()	(up->nerrlab++, setlabel(&up->errlab[up->nerrlab-1]))
 
+#define PTR2UINT(p)	((uintptr)(p))
+#define UINT2PTR(i)	((void*)(i))
