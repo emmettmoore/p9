@@ -1,0 +1,3 @@
+can't have bind(2) and bind(ape socket call) in the same program by
+the same name.  since we already have _BIND, use this.
+

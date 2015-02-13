@@ -1,0 +1,2 @@
+/sys/src/cmd/vt/main.c	main.c
+/sys/src/cmd/vt/event.c	event.c

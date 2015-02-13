@@ -1,0 +1,5 @@
+/sys/man/1/jpg	jpg
+/sys/src/cmd/jpg/tojpg.c	tojpg.c
+/sys/src/cmd/jpg/writejpg.c	writejpg.c
+/sys/src/cmd/jpg/mkfile	mkfile
+/sys/src/cmd/jpg/imagefile.h	imagefile.h

@@ -1,0 +1,3 @@
+add libbio to ape for libsec thumbprints.
+note that Bgetd was left out pending reorginization of
+(fmt)charstod

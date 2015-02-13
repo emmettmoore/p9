@@ -1,0 +1,2 @@
+from richard miller: /n/sources/patch/applied/rpi-model-a-usb
+Empirical adjustments to usb for Raspberry Pi Model A (which has no built-in hub).

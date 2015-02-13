@@ -1,0 +1,2 @@
+graphics(2) gives geninitdraw a mousedir argument
+which it doesn't actually have. This removes it.

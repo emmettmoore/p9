@@ -1,0 +1,3 @@
+/sys/src/9/pc/trap.c	trap.c
+/sys/src/9/ppc/trap.c	trap.c.1
+/sys/src/9/pcpae/trap.c	trap.c.2

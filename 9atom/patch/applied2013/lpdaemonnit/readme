@@ -1,0 +1,16 @@
+>From: yaroslav <yarikos@gmail.com>
+>Subject: [9fans] lpdaemon
+
+in /sys/src/cmd/lp/lpdaemon.c:297,310
+
+These
+			info.host[strlen(info.host)] = '\0';
+			…
+			info.user[strlen(info.user)] = '\0';
+
+look nonsence as zeros are placed exactly where they already are.
+Should read as in following instead:
+
+			info.host[NAMELEN] = '\0';
+			…
+			info.user[NAMELEN] = '\0';

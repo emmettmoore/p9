@@ -1,0 +1,4 @@
+from charles, and the sources patch of the same name
+
+Add a -s srvname option to rdbfs, allowing debugging sessions to be shared
+or later reattached after disconnection.

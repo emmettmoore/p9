@@ -1,0 +1,9 @@
+/sys/src/libc/port/mkfile	mkfile
+/sys/src/cmd/runetype/mkfile	mkfile.1
+/sys/man/1/rune	rune
+/sys/man/2/runeclass	runeclass
+/sys/src/libc/port/runedecompose.c	runedecompose.c
+/sys/src/libc/port/runedecompose.h	runedecompose.h
+/sys/include/libc.h	libc.h
+/sys/src/cmd/runetype/runedecompose.rc	runedecompose.rc
+/sys/src/cmd/runetype/decompose.c	decompose.c

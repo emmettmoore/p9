@@ -1,0 +1,7 @@
+1.  use short to long and long to short avl trees to lookup translations,
+rather than a linear (and unsorted) search.
+
+2.  -l flag controls the maximum file length (our file servers have a maximum
+of 53).  -f controls if frogs (spaces) are allowed.
+
+3.  new program relnfs changes max length, or frog setting.

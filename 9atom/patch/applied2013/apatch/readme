@@ -1,0 +1,4 @@
+a first cut at an atom patch system modeled on patch(1), and
+the patch system from the old nix system.  there is no manual
+page yet, as this is not yet announced and the design is still in
+flux.

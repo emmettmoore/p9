@@ -1,0 +1,4 @@
+/sys/src/ape/cmd/uname.c	uname.c
+/sys/src/ape/cmd/sed/mkfile	mkfile
+/sys/src/ape/cmd/dirname.c	dirname.c
+/sys/src/ape/cmd/mkfile	mkfile

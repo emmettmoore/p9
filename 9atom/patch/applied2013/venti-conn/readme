@@ -1,0 +1,10 @@
+Subject venti-conn(2)
+
+Change to the man page to note that vtdial checks the
+environment and falls back to tcp!$venti!venti. Also
+submitted as a patch to sources.
+
+Discovered while poking at venti today, in service of
+my other issues. I wasn't at home and didn't want to
+try a new kernel remotely. I'm home now and will give
+it a shot shortly.

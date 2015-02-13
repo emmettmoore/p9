@@ -1,0 +1,11 @@
+/rc/bin/apatch/Apply	Apply
+/rc/bin/apatch/applied	applied
+/rc/bin/apatch/apply	apply
+/rc/bin/apatch/create	create
+/rc/bin/apatch/defs	defs
+/rc/bin/apatch/diff	diff
+/rc/bin/apatch/diffemail	diffemail
+/rc/bin/apatch/list	list
+/rc/bin/apatch/notify	notify
+/rc/bin/apatch/okay	okay
+/rc/bin/apatch/undo	undo

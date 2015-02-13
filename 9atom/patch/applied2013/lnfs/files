@@ -1,0 +1,8 @@
+/sys/man/4/lnfs	lnfs
+/rc/bin/unlnfs	unlnfs
+/386/bin/lnfs	lnfs.1
+/386/bin/relnfs	relnfs
+/sys/src/cmd/lnfs/ln2short.c	ln2short.c
+/sys/src/cmd/lnfs/lnfs.c	lnfs.c
+/sys/src/cmd/lnfs/mkfile	mkfile
+/sys/src/cmd/lnfs/relnfs.c	relnfs.c

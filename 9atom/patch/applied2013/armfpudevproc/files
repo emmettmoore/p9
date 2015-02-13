@@ -1,0 +1,6 @@
+/sys/src/9/teg2/softfpu.c	softfpu.c
+/sys/src/9/teg2/fns.h	fns.h
+/sys/src/9/omap/softfpu.c	softfpu.c.1
+/sys/src/9/omap/fns.h	fns.h.1
+/sys/src/9/kw/softfpu.c	softfpu.c.1
+/sys/src/9/kw/fns.h	fns.h.1

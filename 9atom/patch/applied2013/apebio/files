@@ -1,0 +1,3 @@
+/sys/src/ape/lib/bio/mkfile	mkfile
+/sys/include/ape/bio.h	bio.h
+/sys/src/ape/lib/9/libc.h	libc.h

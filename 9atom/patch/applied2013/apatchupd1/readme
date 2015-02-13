@@ -1,0 +1,3 @@
+- disallow patch names that duplicate with previously applied patches
+- don't ask if you want to email; you do
+- don't flake out if unable to find a unique patch name

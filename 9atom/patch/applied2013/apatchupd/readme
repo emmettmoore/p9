@@ -1,0 +1,1 @@
+don't reset $patch; this messes up patch application.

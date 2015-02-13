@@ -1,0 +1,21 @@
+more portable fpu devprocio
+
+on the architecture of the new sse support for the pae kernel
+1.  there is no support for x87.  an early version of this work had
+a FPArch structure, so that instead of fpclear, one wrote fp->clear().
+while really clean, and potentially helpful for arm, this results in
+a lot of churn and incompatability.  other than devarch, there should
+be no dependence on sse except in fpsse.c
+
+2.  in order to reduce churn, the assembly code does the proper
+rounding to insure alignment of the fxsave area.
+
+3.  devprocio is the only place where we care where the fxsave area
+is.  the least churn was to add a default devprocio (the same as the
+old one), and allow architectures to override it.  this saves us from
+having to import sse-specific ideas about alignment into the portable
+code.
+
+4.  odd bit: we are clearing the xmm registers by hand when fp is
+intialized to provide a consistent register state for new processes,
+and to avoid leaking register information.

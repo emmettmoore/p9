@@ -1,0 +1,6 @@
+from cinap
+
+archacpi: handle multiple SSDT tables
+
+we cannot assume there is only one instance of some
+tables.

@@ -1,0 +1,1 @@
+add the ability to debug sse on 386; correct MMX register definition for amd64

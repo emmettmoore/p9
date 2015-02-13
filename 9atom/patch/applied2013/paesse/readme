@@ -1,0 +1,2 @@
+replace x87 floating point with sse floating point for the pae kernel.
+there is no option to fall back to FSAVE vs FXSAVE.

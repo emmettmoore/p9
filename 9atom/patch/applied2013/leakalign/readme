@@ -1,0 +1,2 @@
+account for alignment padding.
+leak appears to still assume 32-bit ptrs, unfortunately

@@ -1,0 +1,7 @@
+/sys/src/cmd/postscript/tr2post/chartab.c	chartab.c
+/sys/src/cmd/postscript/tr2post/conv.c	conv.c
+/sys/src/cmd/postscript/tr2post/devcntl.c	devcntl.c
+/sys/src/cmd/postscript/tr2post/draw.c	draw.c
+/sys/src/cmd/postscript/tr2post/pictures.c	pictures.c
+/sys/src/cmd/postscript/tr2post/tr2post.h	tr2post.h
+/sys/src/cmd/postscript/tr2post/utils.c	utils.c

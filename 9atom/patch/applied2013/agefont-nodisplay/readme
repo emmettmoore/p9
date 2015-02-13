@@ -1,0 +1,11 @@
+If you run this:
+	{for (i in `{seq 1 70000}) echo '½•α·'} | mc | wc
+mc will eventually suicide. The error comes from
+/sys/src/libdraw/font.c:/^agefont which assumes it has a
+display. Normally, this is set up by geninitdraw (usually
+via initdraw), but mc.c avoids that to avoid the screen
+redraws (flicker, at a minimum, but worse in long-running
+cases). 
+
+graphics(2) does not prohibit this use, so I made the least
+intrusive change to make it work.

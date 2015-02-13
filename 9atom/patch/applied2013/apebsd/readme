@@ -1,0 +1,3 @@
+- finish ip6 implementation
+- add herror, inet_ntop, inet_pton, ip6const
+- correct types and eliminate warnings

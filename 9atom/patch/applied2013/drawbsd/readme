@@ -1,0 +1,2 @@
+use libc.h from ../lib9
+turn on warnings and -T

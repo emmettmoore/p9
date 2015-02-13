@@ -1,0 +1,100 @@
+dev
+	root
+	cons
+	arch
+	pci		pci
+	env
+	pipe
+	proc
+	mnt
+	srv
+	dup
+	rtc
+	ssl
+	tls
+	cap
+	kprof
+	trace		archtrace
+
+	ether		netif
+	cec
+	ip		arp chandial ip ipv6 ipaux iproute netlog nullmedium pktmedium ptclbsum386 inferno
+	aoe		ip
+
+	draw		drawalloc screen vga vgax swcursor
+	mouse		mouse
+	vga
+
+	sd		sdalloc
+
+	audio
+
+	pckb		latin1
+	uart
+	usb
+
+link
+	realmode
+	ether2000	ether8390
+	ether8139	pci
+	ether8169	pci ethermii
+	ether82557	pci
+	ether82563	pci
+	etherbcm	pci
+	etherigbe	pci ethermii
+	ethermedium
+	loopbackmedium
+	usbuhci
+	usbohci
+	usbehci 		usbehcipc
+	winbond
+
+misc
+	physalloc
+	qmalloc
+	noswap
+
+	archmp		mp nomp mpacpi apic msi
+
+	fpsse
+
+	sdaoe
+	sdide		pci sdscsi
+	sdiahci		pci sdscsi led
+	sdloop
+
+	uarti8250	uartp8250
+	uartpci		pci uartp8250
+
+	vgavesa
+	vgavmware	+cur
+
+	audiohda	pci
+	audioac97	audioac97m	pci
+
+ip
+	il
+	tcp
+	udp
+	ipifc
+	icmp
+	icmp6
+
+port
+	int cpuserver = 0;
+
+boot
+	tcp
+	il
+	local
+
+bootdir
+	boot$CONF.out boot
+	/386/bin/ip/ipconfig
+	/386/bin/auth/factotum
+	/386/bin/fossil/fossil
+	/386/bin/venti/venti
+	/386/bin/usb/usbd
+
+flags
+#	LD	-e -p

@@ -1,0 +1,2 @@
+/sys/man/8/smtp	smtp
+/sys/src/cmd/upas/smtp/smtp.c	smtp.c

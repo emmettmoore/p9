@@ -1,0 +1,9 @@
+/sys/src/cmd/cifs/trans2.c	trans2.c
+/sys/src/cmd/cifs/trans.c	trans.c
+/sys/src/cmd/cifs/cifs.c	cifs.c
+/sys/src/cmd/cifs/cifs.h	cifs.h
+/sys/src/cmd/cifs/dfs.c	dfs.c
+/sys/src/cmd/cifs/fs.c	fs.c
+/sys/src/cmd/cifs/main.c	main.c
+/sys/src/cmd/cifs/mkfile	mkfile
+/sys/src/cmd/cifs/pack.c	pack.c

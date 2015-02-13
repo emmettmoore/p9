@@ -1,0 +1,95 @@
+dev
+	root
+	cons
+	arch
+	pci		pci
+	env
+	pipe
+	proc
+	mnt
+	srv
+	dup
+	rtc
+	ssl
+	tls
+	bridge		log
+	cap
+	kprof
+#	fs
+	trace		archtrace
+
+	ether		netif
+	cec
+	ip		arp chandial ip ipv6 ipaux iproute netlog nullmedium pktmedium ptclbsum386 inferno
+	aoe		ip
+
+	sd		sdalloc
+
+	uart
+#	usb
+
+link
+	realmode
+#	acpi
+#	ether2000	ether8390
+#	ether2114x	pci
+#	ether8139	pci
+	ether8169	pci ethermii
+	ether82563	pci
+#	ether83815	pci
+	etherbcm	pci
+#	etherigbe	pci ethermii
+#	etheryuk		pci
+	etherm10g	pci
+	ether82598	pci
+	ethermedium
+	loopbackmedium
+#	usbuhci
+#	usbohci
+#	usbehci 		usbehcipc
+	winbond
+
+misc
+	physalloc
+	qmalloc
+#	alloc
+#	xalloc
+	noswap
+
+	archacpi		mp nomp mpacpi apic msi
+	archmp		mp nomp mpacpi apic msi
+
+	uarti8250	uartp8250
+	uartox958	pci uartp8250
+	uartpci		pci uartp8250
+
+	sdaoe
+	sdide		pci
+	sdiahci		pci sdscsi led
+	sdmpt2		pci sdscsi
+	sdloop
+	sdodin		pci sdscsi led
+
+ip
+	il
+	tcp
+	udp
+	ipifc
+	icmp
+	icmp6
+
+port
+	int cpuserver = 1;
+
+boot cpu
+	tcp
+	il
+
+bootdir
+	bootpaecpu.out boot
+	/386/bin/ip/ipconfig ipconfig
+	/386/bin/auth/factotum
+lib
+	/$objtype/lib/libaml.a
+flags
+	LD		-e -p

@@ -1,0 +1,10 @@
+/sys/src/9/pcpae/pae	pae
+/sys/src/9/pcpae/sse.c	sse.c
+/sys/src/9/pcpae/main.c	main.c
+/sys/src/9/pcpae/paecpu	paecpu
+/sys/src/9/pcpae/mp.c	mp.c
+/sys/src/9/pcpae/dat.h	dat.h
+/sys/src/9/pcpae/fns.h	fns.h
+/sys/src/9/pcpae/l.s	l.s
+/sys/src/9/pcpae/fpsse.c	fpsse.c
+/sys/src/9/pcpae/devarch.c	devarch.c

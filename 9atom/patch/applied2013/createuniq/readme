@@ -1,0 +1,2 @@
+delete length() so the 3d file of the same base name doesn't
+fail

@@ -1,0 +1,2 @@
+clean up pool definitions, and handle 386 kernel pointers.
+still assuming 32-bits.

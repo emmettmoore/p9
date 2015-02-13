@@ -1,0 +1,3 @@
+/sys/src/ape/lib/auth/authsrv.h	authsrv.h
+/sys/src/ape/lib/auth/fcall.h	fcall.h
+/sys/src/ape/lib/auth/mkfile	mkfile

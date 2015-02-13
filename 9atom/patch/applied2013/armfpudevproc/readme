@@ -1,0 +1,2 @@
+fpudevprocio is a function pointer now.  ironicly this was done to
+reduce churn.  :-(.

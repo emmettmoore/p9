@@ -1,0 +1,7 @@
+crash seen on minooka:
+
+	acid; stk()
+	strlen(p=0x0)+0xc /sys/src/libc/386/strlen.s:11
+	login(dest=0x24eb0,pass_nvram=0x0,pass_stdin=0x0,id=0x242f0)+0x544 /sys/src/cmd/auth/secstore/secstore.c:426
+	main(argv=0xdf7fef8c,argc=0x0)+0x1e6 /sys/src/cmd/auth/secstore/secstore.c:559
+	_main+0x31 /sys/src/libc/386/main9.s:16

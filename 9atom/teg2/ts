@@ -1,0 +1,98 @@
+# trimslice dual-core cortex-a9
+dev
+	root
+	cons
+	env
+	pipe
+	proc
+	mnt
+	srv
+	dup
+	arch
+	ssl
+	tls
+	bridge		log
+	sdp		thwack unthwack
+	cap
+	kprof
+	aoe
+	sd		pisdalloc
+	fs
+#	flash
+
+	ether		netif
+	ip		arp chandial ip ipv6 ipaux iproute netlog nullmedium pktmedium ptclbsum inferno
+	cec
+
+#	draw		screen
+#	dss
+#	mouse
+
+	uart
+	pckb		latin1
+#	usb
+
+link
+	archtegra
+	ethermedium
+#	flashtegra	ecc
+	loopbackmedium
+	netdevmedium
+
+	ether8169	ethermii
+#	usbohci
+#	usbehci		usbehcitegra
+
+ip
+	il
+	tcp
+	udp
+	ipifc
+	icmp
+	icmp6
+	ipmux
+
+misc
+	physalloc
+	qmalloc
+	nodraw
+	noswap
+
+	allocb
+
+	pci
+	rdb
+	coproc
+	v7-arch
+	caches
+	caches-v7
+	cache-l2-pl310
+#	mouse
+	sdaoe		sdscsi
+	syscall
+	syscallfmt
+	uarti8250
+	ucalloc
+	ucallocb
+# include vfp3 to use hardware fp, otherwise include softfpu
+	vfp3
+#	softfpu
+# emulated arm7500 fp
+	fpi
+	fpiarm
+	fpimem
+
+port
+	int cpuserver = 1;
+	int i8250freq = 3686000;
+
+boot cpu
+	tcp
+	il
+
+bootdir
+	boot$CONF.out boot
+	/arm/bin/ip/ipconfig ipconfig
+	/arm/bin/auth/factotum factotum
+	nvram
+	/arm/bin/usb/usbd

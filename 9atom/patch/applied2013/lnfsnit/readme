@@ -1,0 +1,2 @@
+readnames() was missing from rw?stat and resulted in a null
+dereference.

@@ -1,0 +1,2 @@
+don't let font set through -f leak into environment
+of parent, and sundary cleanup.

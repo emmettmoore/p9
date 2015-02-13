@@ -1,0 +1,4 @@
+add from libc
+- sysfatal, tokenize (Rune version; cf libv), truerand, u(16|32|64), crypt
+new file
+- nsec (simplified from libc, use internal versions like _READ)

@@ -1,0 +1,8 @@
+/sys/lib/acid/386	386
+/386/bin/acid	acid
+/386/bin/db	db
+/386/lib/libmach.a	libmach.a
+/sys/src/libmach/6.c	6.c
+/sys/src/libmach/8.c	8.c
+/386/bin/acid	acid.1
+/386/bin/db	db.1

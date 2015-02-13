@@ -1,0 +1,6 @@
+/sys/src/9/kw/plug	plug
+/sys/src/9/kw/mkfile	mkfile
+/sys/src/9/kw/fpiarm.c	fpiarm.c
+/sys/src/9/kw/fpivfp.c	fpivfp.c
+/sys/src/9/kw/dat.h	dat.h
+/sys/src/9/kw/arm.h	arm.h
