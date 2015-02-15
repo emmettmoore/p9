@@ -123,7 +123,7 @@ struct Notsave
 	int dummy;
 };
 
-#include "./portdat.h" /* XXX formerly ../port/portdat.h */
+#include "portdat.h" /* XXX formerly ../port/portdat.h */
 
 struct Mach
 {
