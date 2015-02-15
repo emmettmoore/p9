@@ -698,7 +698,9 @@ extern	long	preadv(int, IOchunk*, int, vlong);
 extern	long	pwrite(int, void*, long, vlong);
 extern	long	pwritev(int, IOchunk*, int, vlong);
 extern	long	read(int, void*, long);
+#ifndef THREEINCH
 extern	long	readn(int, void*, long);
+#endif
 extern	long	readv(int, IOchunk*, int);
 extern	int	remove(char*);
 extern	void*	sbrk(ulong);
