@@ -417,11 +417,13 @@ extern	void	prof(void (*fn)(void*), void *arg, int entries, int what);
 /*
  * atomic
  */
+#ifndef THREEINCH
 long	ainc(long*);
 long	adec(long*);
 int	cas32(u32int*, u32int, u32int);
 int	casp(void**, void*, void*);
 int	casl(ulong*, ulong, ulong);
+#endif
 
 /*
  *  synchronization
@@ -696,7 +698,9 @@ extern	long	preadv(int, IOchunk*, int, vlong);
 extern	long	pwrite(int, void*, long, vlong);
 extern	long	pwritev(int, IOchunk*, int, vlong);
 extern	long	read(int, void*, long);
+#ifndef THREEINCH
 extern	long	readn(int, void*, long);
+#endif
 extern	long	readv(int, IOchunk*, int);
 extern	int	remove(char*);
 extern	void*	sbrk(ulong);

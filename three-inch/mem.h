@@ -2,6 +2,12 @@
  * Memory and machine-specific definitions.  Used in C and assembler.
  */
 
+#define HOWMANY(x, y)	(((x)+((y)-1))/(y))
+#define ROUNDUP(x, y)	(HOWMANY((x), (y))*(y))	/* ceiling */
+#define ROUNDDN(x, y)	(((x)/(y))*(y))		/* floor */
+#define MIN(a, b)	((a) < (b)? (a): (b))
+#define MAX(a, b)	((a) > (b)? (a): (b))
+
 /*
  * Sizes
  */
@@ -10,10 +16,10 @@
 #define	BY2WD		4			/* bytes per word */
 #define	BY2V		8			/* bytes per double word */
 #define	BY2PG		4096			/* bytes per page */
-#define	WD2PG		(BY2PG/BY2WD)		/* words per page */
 #define	PGSHIFT		12			/* log(BY2PG) */
 #define	ROUND(s, sz)	(((s)+(sz-1))&~(sz-1))
-#define	PGROUND(s)	ROUND(s, BY2PG)
+#define	PGROUND(s)	ROUNDUP(s, BY2PG)
+#define	UTROUND(s)	ROUNDUP(s, BY2PG)
 #define	BLOCKALIGN	8
 
 #define	MAXMACH	1			/* max # cpus system can run */
@@ -55,9 +61,9 @@
 #define	UCDRAMTOP	0xD0000000		/* ... */
 #define	NULLZERO	0xE0000000		/* 128 meg for cache flush zeroes */
 #define	NULLTOP		0xE8000000		/* ... */
-#define	USTKTOP		0x2000000		/* byte just beyond user stack */
+#define	TSTKTOP		0x2000000		/* byte just beyond user stack */
 #define	USTKSIZE		(8*1024*1024)		/* size of user stack */
-#define	TSTKTOP		(USTKTOP-USTKSIZE)	/* end of new stack in sysexec */
+#define	USTKTOP		(TSTKTOP-USTKSIZE)	/* end of new stack in sysexec */
 #define	TSTKSIZ	 	100
 #define	MACHADDR	(KZERO+0x00001000)
 #define	EVECTORS	0xFFFF0000		/* virt base of exception vectors */
@@ -234,4 +240,3 @@
 #define MDCNFG_de3	0x00000008
 #define MDCFNG_de	0x0000000f
 #define PMCR_sf		1
-
