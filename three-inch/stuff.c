@@ -36,7 +36,7 @@ freeb(Block *b)
 */
 	/* poison the block in case someone is still holding onto it */
 /*
-    b->next = dead;
+	b->next = dead;
 	b->rp = dead;
 	b->wp = dead;
 	b->lim = dead;
@@ -50,7 +50,7 @@ freeb(Block *b)
 void
 panic(char *fmt, ...)
 {
-    /*
+	/*
 	int n, s;
 	va_list arg;
 	char buf[PRINTSIZE];
@@ -105,7 +105,7 @@ allocb(int size)
 void
 ilock(Lock *l)
 {
-    (void) l;
+	(void) l;
 }
 
 
@@ -113,14 +113,14 @@ ilock(Lock *l)
 void
 iunlock(Lock *l)
 {
-    (void) l;
+	(void) l;
 }
 
 Proc*
 wakeup(Rendez *r)
 {
 	Proc *p = nil;
-    /*
+	/*
 	int s;
 
 	s = splhi();
@@ -143,7 +143,7 @@ wakeup(Rendez *r)
 
 	splx(s);
 
-    */
+	*/
 	return p;
 }
 
@@ -152,7 +152,7 @@ Block*
 iallocb(int size)
 {
 	Block *b = nil;
-    /*
+	/*
 	static int m1, m2, mp;
 
 	if(ialloc.bytes > conf.ialloc){
@@ -184,7 +184,7 @@ iallocb(int size)
 	ilock(&ialloc);
 	ialloc.bytes += b->lim - b->base;
 	iunlock(&ialloc);
-    */
+	*/
 	return b;
 }
 
@@ -196,15 +196,15 @@ nexterror(void)
 
 void sched(void)
 {
-    /* slightly simpler than round robin is the "one process only" scheduler */
+	/* slightly simpler than round robin is the "one process only" scheduler */
 }
 /* in a .s file, I believe. Not tryna do that right now */
 int setlabel(Label*)
 {
-    return 0;
+	return 0;
 }
 
 void error (char * str)
 {
-    (void) str;
+	(void) str;
 }
