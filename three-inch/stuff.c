@@ -1,14 +1,9 @@
 #define THREEINCH
 #include "stuff.h"
 
-
 /*
 int up;
 */
-void main(void) {
-    print("woooo! compiles and links !!!!\n");
-    exits(0);
-}
 
 /* /port/allocb.c */
 void

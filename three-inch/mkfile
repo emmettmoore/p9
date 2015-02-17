@@ -1,7 +1,11 @@
-qio: qio.5
-	5l -o qio qio.5 stuff.5
+qio: qio.5 stuff.5 main.5
+	5l -o qio qio.5 stuff.5 main.5
 
-qio.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h
-	5c -o qio.5 qio.c
-    5c -o stuff.5 stuff.c
+qio.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h main.c
+	5c qio.c
 
+stuff.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h main.c
+	5c stuff.c
+
+main.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h main.c
+	5c main.c
