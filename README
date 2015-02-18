@@ -5,3 +5,15 @@ Directories:
 9 - source code for the Plan 9 kernel
 hello - hello world program
 three-inch - attempt to isolate qio.c to run in Plan 9 user space
+
+Instructions for compiling/running our code on our rpi:
+- clone our repo, say it is at /path/to/repo on your computer
+- get drawterm - http://swtch.com/drawterm/
+- drawterm -u <username> -c <ip address> (we'll send you the info)
+- type in password
+- the screen should go gray
+- right click and click "new", click & drag to get a terminal!
+- cd into /mnt/term/path/to/repo
+  (notice your entire filesystem is accessible at /mnt/term)
+- in the three-inch directory, type mk to compile, ./qio to run
+  (mkfile defines the rules for compiling & linking the executable)
