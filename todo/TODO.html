@@ -33,6 +33,26 @@
 <h3>Simulate a Test Environment</h3>
 
 <ul>
+<li><p><em>Functions Fake-Implemented in qio.c</em></p>
+
+<ol>
+<li>iallocb </li>
+<li>freeb</li>
+<li><code>waserror</code> == <code>(up-&gt;;nerrlab++, setlabel(&amp;up-&gt;errlab[up-&gt;nerrlab-1]))</code>
+<ul>
+<li><strong>Solution</strong>: we don't need waserror in this simulation, so we will just <code>#define waserror 0</code></li>
+</ul></li>
+<li>nexterror
+<ul>
+<li><strong>Solution</strong>: empty. As in, <code>void { return; }</code></li>
+</ul></li>
+<li>memmove? redefinition error, or it just fails. doesnt make sense to me. <em>where is this defined????</em></li>
+</ol></li>
+<li><p><em>Functions to Implement In qio.c</em></p>
+
+<ol>
+<li>asdf</li>
+</ol></li>
 <li>Make the nonsensical functions and simulated global variables make sense.</li>
 <li>Don't change qio.c.</li>
 <li>Once we can queue stuff, in a test environment we are comfortable with, we can start to change qio.c</li>

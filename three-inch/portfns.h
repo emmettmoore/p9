@@ -238,7 +238,7 @@ void		physfree(uintmem, usize);
 void		physinit(uintmem);
 void		physinitfree(uintmem, uintmem);
 void		pio(Segment *, ulong, ulong, Page **);
-#define		poperror()		up->nerrlab--
+#define		poperror()		void;
 void		portcountpagerefs(ulong*, int);
 int		postnote(Proc*, int, char*, int);
 int		pprint(char*, ...);

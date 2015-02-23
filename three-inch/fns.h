@@ -118,7 +118,7 @@ void	wbflush(void);
 #define KADDR(a) (void*)mmu_kaddr((ulong)(a))
 #define PADDR(a) mmu_paddr((ulong)(a))
 
-#define	waserror()	(up->nerrlab++, setlabel(&up->errlab[up->nerrlab-1]))
+#define	waserror()	0
 
 #define PTR2UINT(p)	((uintptr)(p))
 #define UINT2PTR(i)	((void*)(i))

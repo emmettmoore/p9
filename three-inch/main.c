@@ -4,16 +4,19 @@
 
 void
 main(void) {
+    print("in main, haven't done anything\n");
 	char *buf = "hello";
 	char c;
 	Queue *q;
+    print("declared some shit\n");
 	q = qopen(1024, 0, 0, 0);
+    print("qopen success\n");
 	qwrite(q, buf, 5);
-	print("hey\n");
+	print("qwrite success\n");
 	qread(q, &c, 1);
-	print("did\n");
+	print("qread success\n");
 	printf("%s\n", buf);
 	printf("buf2: %c\n", c);
-	print("woooo! compiles and links !!!!\n");
+	print("woooo! three inchez!!!!\n");
 	exits(0);
 }

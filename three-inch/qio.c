@@ -1332,6 +1332,7 @@ qbwrite(Queue *q, Block *b)
 int
 qwrite(Queue *q, void *vp, int len)
 {
+    print("in qwrite\n");
 	int n, sofar;
 	Block *b;
 	uchar *p = vp;
@@ -1344,19 +1345,23 @@ qwrite(Queue *q, void *vp, int len)
 		n = len-sofar;
 		if(n > Maxatomic)
 			n = Maxatomic;
-
 		b = allocb(n);
 		if(waserror()){
 			freeb(b);
 			nexterror();
 		}
-		memmove(b->wp, p+sofar, n);
+        print("memmove no cigar\n");
+  		//memmove(nil, nil, 0);
+  		memmove(b->wp, p+sofar, n);
+        print("memmove success, poperror no cigar\n");
 		poperror();
+        print("poperror success\n");
 		b->wp += n;
-
+        print("wp incrememted success\n");
 		qbwrite(q, b);
-
+        print("qbwrite success\n");
 		sofar += n;
+        print("sofar incrememt success\n");
 	} while(sofar < len && (q->state & Qmsg) == 0);
 
 	return len;
