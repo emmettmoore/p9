@@ -23,18 +23,16 @@
 
 ### Simulate a Test Environment
 -   _Functions Fake-Implemented in qio.c_
-    1.  iallocb 
     2.  freeb
     3.  `waserror` == `(up->;nerrlab++, setlabel(&up->errlab[up->nerrlab-1]))`
         -   **Solution**: we don't need waserror in this simulation, so we will just `#define waserror 0`
     4. nexterror
         -   **Solution**: empty. As in, `void { return; }`
     5. `poperror` == `up->nerrlab--`
-    6. memmove? redefinition error, or it just fails. doesnt make sense to me. _where is this defined????_
-        -   only given the original arguments. with (nil, nil, 0), it gets by. _why does this fail like this?_
 
--   _Functions to Implement In qio.c_
-    1.  asdf
+-   _Functions Implemented In qio.c_
+    1.  allocb (and helper, \_allocb)
+
 -   Make the nonsensical functions and simulated global variables make sense.
 -   Don't change qio.c.
 -   Once we can queue stuff, in a test environment we are comfortable with, we can start to change qio.c

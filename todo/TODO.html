@@ -36,7 +36,6 @@
 <li><p><em>Functions Fake-Implemented in qio.c</em></p>
 
 <ol>
-<li>iallocb </li>
 <li>freeb</li>
 <li><code>waserror</code> == <code>(up-&gt;;nerrlab++, setlabel(&amp;up-&gt;errlab[up-&gt;nerrlab-1]))</code>
 <ul>
@@ -46,14 +45,14 @@
 <ul>
 <li><strong>Solution</strong>: empty. As in, <code>void { return; }</code></li>
 </ul></li>
-<li>memmove? redefinition error, or it just fails. doesnt make sense to me. <em>where is this defined????</em></li>
+<li><code>poperror</code> == <code>up-&gt;nerrlab--</code></li>
 </ol></li>
-<li><p><em>Functions to Implement In qio.c</em></p>
+<li><p><em>Functions Implemented In qio.c</em></p>
 
 <ol>
-<li>asdf</li>
+<li>allocb (and helper, _allocb)</li>
 </ol></li>
-<li>Make the nonsensical functions and simulated global variables make sense.</li>
+<li><p>Make the nonsensical functions and simulated global variables make sense.</p></li>
 <li>Don't change qio.c.</li>
 <li>Once we can queue stuff, in a test environment we are comfortable with, we can start to change qio.c</li>
 </ul>
