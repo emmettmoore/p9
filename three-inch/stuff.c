@@ -80,25 +80,58 @@ panic(char *fmt, ...)
 }
 
 /* /port/allocb.c */
+Hdrspc = 64;
+
+/* /port/allocb.c */
+static Block*
+_allocb(int size)
+{
+	Block *b;
+	uchar *p;
+	int n;
+
+	n = BLOCKALIGN + ROUNDUP(size+Hdrspc, BLOCKALIGN) + sizeof(Block);
+	if((p = malloc(n)) == nil)
+		return nil;
+
+	b = (Block*)(p + n - sizeof(Block));	/* block at end of allocated space */
+	b->base = p;
+	b->next = nil;
+	b->list = nil;
+	b->free = 0;
+	b->flag = 0;
+
+	/* align base and bounds of data */
+	b->lim = (uchar*)(PTR2UINT(b) & ~(BLOCKALIGN-1));
+
+	/* align start of writable data, leaving space below for added headers */
+	b->rp = b->lim - ROUNDUP(size, BLOCKALIGN);
+	b->wp = b->rp;
+
+	if(b->rp < b->base || b->lim - b->rp < size)
+		panic("_allocb");
+
+	return b;
+}
 Block*
 allocb(int size)
 {
+    print("in allcob");
 	Block *b = nil;
-	/*
 
-	 * Check in a process and wait until successful.
+	/* Check in a process and wait until successful.
 	 * Can still error out of here, though.
-	if(up == nil)
-		panic("allocb without up: %#p", getcallerpc(&size));
+     */
 	if((b = _allocb(size)) == nil){
 		xsummary();
 		mallocsummary();
 		panic("allocb: no memory for %d bytes", size);
 	}
+    print(" with a successful call to the static function; i.e. no panic ahh!\n");
 	setmalloctag(b, getcallerpc(&size));
 
-	 */
-	return nil;
+	return b;
+    
 }
 
 /* /9/port/taslock.c */
@@ -191,7 +224,7 @@ iallocb(int size)
 void
 nexterror(void)
 {
-	
+	return;
 }
 
 void sched(void)
@@ -208,3 +241,7 @@ void error (char * str)
 {
 	(void) str;
 }
+
+/* /port/qmalloc.c */
+void xsummary() {}
+void mallocsummary() {}

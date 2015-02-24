@@ -33,7 +33,26 @@
 <h3>Simulate a Test Environment</h3>
 
 <ul>
-<li>Make the nonsensical functions and simulated global variables make sense.</li>
+<li><p><em>Functions Fake-Implemented in qio.c</em></p>
+
+<ol>
+<li>freeb</li>
+<li><code>waserror</code> == <code>(up-&gt;;nerrlab++, setlabel(&amp;up-&gt;errlab[up-&gt;nerrlab-1]))</code>
+<ul>
+<li><strong>Solution</strong>: we don't need waserror in this simulation, so we will just <code>#define waserror 0</code></li>
+</ul></li>
+<li>nexterror
+<ul>
+<li><strong>Solution</strong>: empty. As in, <code>void { return; }</code></li>
+</ul></li>
+<li><code>poperror</code> == <code>up-&gt;nerrlab--</code></li>
+</ol></li>
+<li><p><em>Functions Implemented In qio.c</em></p>
+
+<ol>
+<li>allocb (and helper, _allocb)</li>
+</ol></li>
+<li><p>Make the nonsensical functions and simulated global variables make sense.</p></li>
 <li>Don't change qio.c.</li>
 <li>Once we can queue stuff, in a test environment we are comfortable with, we can start to change qio.c</li>
 </ul>

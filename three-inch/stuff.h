@@ -1,6 +1,5 @@
 #include    "lib/u.h"
 #include	"lib/libc.h"
-//#include    <lib.h>
 #define KNAMELEN 28 /* from lib.h */
 #include	"mem.h"
 #include	"dat.h"
