@@ -116,7 +116,6 @@ _allocb(int size)
 Block*
 allocb(int size)
 {
-    print("in allcob");
 	Block *b = nil;
 
 	/* Check in a process and wait until successful.
@@ -127,7 +126,6 @@ allocb(int size)
 		mallocsummary();
 		panic("allocb: no memory for %d bytes", size);
 	}
-    print(" with a successful call to the static function; i.e. no panic ahh!\n");
 	setmalloctag(b, getcallerpc(&size));
 
 	return b;
