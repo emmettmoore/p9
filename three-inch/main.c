@@ -2,31 +2,42 @@
 #include "stuff.h"
 #include <stdio.h>
 
+#define NENTS 1024
+#define QLIMIT 256*1024
+#define ENTSIZE 64
+
 void main(void)
 {
 	int pid, val, i;
 	char c;
-	char *buf = "hello";
-	char *buf2 = "a";
-	Queue *q = qopen(1024, 0, 0, 0);
-	qwrite(q, buf2, 1);
+	char *buf = "abcdefgh";
+	char *buf2 = "00000000";
+	char src[ENTSIZE ];
+	char dest[ENTSIZE];
+	for(i = 0; i < ENTSIZE; i++)
+		src[i] = '!' + i;
+	src[ENTSIZE - 1] = '\0';
+	printf("payload: %s\n", src);
+	Queue *q = qopen(QLIMIT, 0, 0, 0);
 
 	switch(pid = rfork(RFPROC|RFMEM)){
 	case -1: /* fork failed */
-		print("ABORT!\n");
+		fprintf(stderr, "ABORT!\n");
 		abort();
 	case 0: /* child: consumer */
-		printf("C: here!\n");
-		for(i = 0; i < 5; i++){
-			val = qread(q, &c, 1);
-			printf("C: qread returned %d\n", val);
-			printf("C: read %c\n", c);
+		print("hey\n");			// NEED this or else it stalls forevar....
+		for(i = 0; i < NENTS; i++){
+			val = qread(q, dest, ENTSIZE);
+//			if(i % 256)
+//				printf("C: %d: qread returned %d\n", i, val);
 		}
 		break;
 	default: /* parent: producer */
-		val = qwrite(q, buf, 5);
-		printf("P: qwrite returned %d\n", val);
-		printf("P: wrote %s\n", buf);
+		for(i = 0; i < NENTS; i++){
+			val = qwrite(q, buf, ENTSIZE);
+//			if(i % 256)
+//				printf("P: %d: qwrite returned %d\n", i, val);
+		}
 		waitpid();
 	}
 }
