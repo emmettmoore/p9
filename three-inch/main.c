@@ -2,7 +2,7 @@
 #include "stuff.h"
 #include <stdio.h>
 
-#define NENTS 1024
+#define NENTS 10
 #define QLIMIT 256*1024
 #define ENTSIZE 64
 
@@ -25,18 +25,19 @@ void main(void)
 		fprintf(stderr, "ABORT!\n");
 		abort();
 	case 0: /* child: consumer */
-		print("hey\n");			// NEED this or else it stalls forevar....
+//		print("hey\n");			// NEED this or else it stalls forevar....
 		for(i = 0; i < NENTS; i++){
 			val = qread(q, dest, ENTSIZE);
-//			if(i % 256)
-//				printf("C: %d: qread returned %d\n", i, val);
+			if(i % 256)
+				printf("C: %d: qread returned %d\n", i, val);
 		}
 		break;
 	default: /* parent: producer */
+		SLEEP(2);
 		for(i = 0; i < NENTS; i++){
 			val = qwrite(q, buf, ENTSIZE);
-//			if(i % 256)
-//				printf("P: %d: qwrite returned %d\n", i, val);
+			if(i % 256)
+				printf("P: %d: qwrite returned %d\n", i, val);
 		}
 		waitpid();
 	}
