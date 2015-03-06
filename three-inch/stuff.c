@@ -5,6 +5,91 @@
 int up;
 */
 
+/*
+ *  sleep if a condition is not true.  Another process will
+ *  awaken us after it sets the condition.  When we awaken
+ *  the condition may no longer be true.
+ *
+ *  we lock both the process and the rendezvous to keep r->p
+ *  and p->r synchronized.
+ */
+void
+sleep(Rendez *r, int (*f)(void*), void *arg)
+{
+	int s;
+	void (*pt)(Proc*, int, vlong);
+
+	s = splhi();
+
+	if(up->nlocks)
+		print("process %lud sleeps with %ud locks held, last lock %#p locked at pc %#p, sleep called from %#p\n",
+			up->pid, up->nlocks, up->lastlock, lockgetpc(up->lastlock), getcallerpc(&r));
+	lock(r);
+	lock(&up->rlock);
+	if(r->p){
+		print("double sleep called from %#p, %lud %lud\n", getcallerpc(&r), r->p->pid, up->pid);
+		dumpstack();
+	}
+
+	/*
+	 *  Wakeup only knows there may be something to do by testing
+	 *  r->p in order to get something to lock on.
+	 *  Flush that information out to memory in case the sleep is
+	 *  committed.
+	 */
+	r->p = up;
+
+	if((*f)(arg) || up->notepending){
+		/*
+		 *  if condition happened or a note is pending
+		 *  never mind
+		 */
+		r->p = nil;
+		unlock(&up->rlock);
+		unlock(r);
+	} else {
+		/*
+		 *  now we are committed to
+		 *  change state and call scheduler
+		 */
+		pt = proctrace;
+		if(pt)
+			pt(up, 5, 0); // SSleep is defined as 5 somewhere
+		up->state = Wakeme;
+		up->r = r;
+
+		/* statistics */
+		m->cs++;
+
+		procsave(up);
+		if(setlabel(&up->sched)) {
+			/*
+			 *  here when the process is awakened
+			 */
+			procrestore(up);
+			spllo();
+		} else {
+			/*
+			 *  here to go to sleep (i.e. stop Running)
+			 */
+			unlock(&up->rlock);
+			unlock(r);
+			gotolabel(&m->sched);
+		}
+	}
+
+	if(up->notepending) {
+		up->notepending = 0;
+		splx(s);
+		if(up->procctl == Proc_exitme && up->closingfgrp)
+			forceclosefgrp();
+		error(Eintr);
+	}
+
+	splx(s);
+}
+
+
 /* /port/allocb.c */
 void
 freeb(Block *b)
