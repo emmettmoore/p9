@@ -385,7 +385,7 @@ void		validname(char*, int);
 char*		validnamedup(char*, int);
 void		validstat(uchar*, int);
 void*		vmemchr(void*, int, int);
-Proc*		wakeup(Rendez*);
+TI_Proc*		wakeup(Rendez*);
 int		walk(Chan**, char**, int, int, int*);
 void		wlock(RWlock*);
 void		wunlock(RWlock*);

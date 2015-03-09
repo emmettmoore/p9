@@ -2,10 +2,10 @@
 #include "stuff.h"
 
 /* /port/proc.c * */
-Proc*
+TI_Proc*
 wakeup(Rendez *r)
 {
-	Proc *p = nil;
+	TI_Proc *p = nil;
 
 	lock(r);
 	p = r->p;
@@ -18,7 +18,7 @@ wakeup(Rendez *r)
 		}
 		r->p = nil;
 		p->r = nil;
-		//ready(p); // Let's try not to use this..
+        semrelease(&sleepsem, 1);
 		unlock(&p->rlock);
 	}
 	unlock(r);
@@ -40,10 +40,12 @@ wakeup(Rendez *r)
 void
 sleep(Rendez *r, int (*f)(void*), void *arg)
 {
-    Proc* currp; // XXX TODO XXX spoof "current process" AKA up
+    TI_Proc* currp; // XXX TODO XXX spoof "current process" AKA up
+    currp->pid = getpid();
 	lock(r);
+	lock(&currp->rlock);
 	if(r->p){
-		panic("sleep!\n");
+		panic("double lock in sleep\n");
 	}
 
 	/*
@@ -53,7 +55,6 @@ sleep(Rendez *r, int (*f)(void*), void *arg)
 	 *  committed.
 	 */
 	r->p = currp; // XXX
-    currp = r->p;
     
 	if( (*f)(arg) ){
 		/*  if condition happened never mind (not sleeping). */
@@ -67,20 +68,22 @@ sleep(Rendez *r, int (*f)(void*), void *arg)
 		currp->state = Wakeme;
 		currp->r = r;
 
-		//procsave(up); // XXX What does "USED do? Where is it? Do we need this?
-		if(setlabel(&up->sched)) {
-			/*
-			 *  here when the process is awakened
-			 */
-  			// procrestore(up); // XXX pretty sure this does nothing on bitsy... see fns.h
+        unlock(&currp->rlock);
+        unlock(r);
+        semacquire(&sleepsem, 1);
+
+        /*
+		if(setlabel(&currp->sched)) {
+			//  here when the process is awakened
 		} else {
-			/*
-			 *  here to go to sleep (i.e. stop Running)
-			 */
+			
+			//here to go to sleep (i.e. stop Running)
+			
 			unlock(&currp->rlock);
 			unlock(r);
 			// gotolabel(&m->sched); XXX
 		}
+        */
 	}
 }
 

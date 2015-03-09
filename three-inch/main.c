@@ -6,6 +6,8 @@
 #define QLIMIT 256*1024
 #define ENTSIZE 64
 
+long sleepsem = 0;
+
 void main(void)
 {
 	int pid, val, i;
