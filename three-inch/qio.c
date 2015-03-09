@@ -932,7 +932,7 @@ print("qwait3\n");
 		q->state |= Qstarve;	/* flag requesting producer to wake me */
 		iunlock(q);
 print("qwait4\n");
-		sleep(&q->rr, notempty, q); // XXX See stuff.h
+		sleep(&q->rr, notempty, q); // "sleep until the queue is not empty"
 print("qwait5\n");
 		ilock(q);
 	}

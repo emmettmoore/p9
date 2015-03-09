@@ -1,34 +1,49 @@
 #define THREEINCH
 #include "stuff.h"
 
-/*
-int up;
-*/
+/* /port/proc.c * */
+Proc*
+wakeup(Rendez *r)
+{
+	Proc *p = nil;
 
-/*
- *  sleep if a condition is not true.  Another process will
+	lock(r);
+	p = r->p;
+
+    /* if proc is sleeping */
+	if(p != nil){
+		lock(&p->rlock);
+		if(p->state != Wakeme || p->r != r){
+			panic("wakeup: state");
+		}
+		r->p = nil;
+		p->r = nil;
+		//ready(p); // Let's try not to use this..
+		unlock(&p->rlock);
+	}
+	unlock(r);
+
+
+	return p;
+}
+
+
+/*  sleep if a condition is not true.  Another process will
  *  awaken us after it sets the condition.  When we awaken
  *  the condition may no longer be true.
  *
  *  we lock both the process and the rendezvous to keep r->p
  *  and p->r synchronized.
+ *
+ * /port/proc.c
  */
 void
 sleep(Rendez *r, int (*f)(void*), void *arg)
 {
-	int s;
-	void (*pt)(Proc*, int, vlong);
-
-	s = splhi();
-
-	if(up->nlocks)
-		print("process %lud sleeps with %ud locks held, last lock %#p locked at pc %#p, sleep called from %#p\n",
-			up->pid, up->nlocks, up->lastlock, lockgetpc(up->lastlock), getcallerpc(&r));
+    Proc* currp; // XXX TODO XXX spoof "current process" AKA up
 	lock(r);
-	lock(&up->rlock);
 	if(r->p){
-		print("double sleep called from %#p, %lud %lud\n", getcallerpc(&r), r->p->pid, up->pid);
-		dumpstack();
+		panic("sleep!\n");
 	}
 
 	/*
@@ -37,56 +52,36 @@ sleep(Rendez *r, int (*f)(void*), void *arg)
 	 *  Flush that information out to memory in case the sleep is
 	 *  committed.
 	 */
-	r->p = up;
-
-	if((*f)(arg) || up->notepending){
-		/*
-		 *  if condition happened or a note is pending
-		 *  never mind
-		 */
+	r->p = currp; // XXX
+    currp = r->p;
+    
+	if( (*f)(arg) ){
+		/*  if condition happened never mind (not sleeping). */
 		r->p = nil;
-		unlock(&up->rlock);
+		unlock(&currp->rlock);
 		unlock(r);
 	} else {
-		/*
-		 *  now we are committed to
+		/*  now we are committed to
 		 *  change state and call scheduler
 		 */
-		pt = proctrace;
-		if(pt)
-			pt(up, 5, 0); // SSleep is defined as 5 somewhere
-		up->state = Wakeme;
-		up->r = r;
+		currp->state = Wakeme;
+		currp->r = r;
 
-		/* statistics */
-		m->cs++;
-
-		procsave(up);
+		//procsave(up); // XXX What does "USED do? Where is it? Do we need this?
 		if(setlabel(&up->sched)) {
 			/*
 			 *  here when the process is awakened
 			 */
-			procrestore(up);
-			spllo();
+  			// procrestore(up); // XXX pretty sure this does nothing on bitsy... see fns.h
 		} else {
 			/*
 			 *  here to go to sleep (i.e. stop Running)
 			 */
-			unlock(&up->rlock);
+			unlock(&currp->rlock);
 			unlock(r);
-			gotolabel(&m->sched);
+			// gotolabel(&m->sched); XXX
 		}
 	}
-
-	if(up->notepending) {
-		up->notepending = 0;
-		splx(s);
-		if(up->procctl == Proc_exitme && up->closingfgrp)
-			forceclosefgrp();
-		error(Eintr);
-	}
-
-	splx(s);
 }
 
 
@@ -159,9 +154,9 @@ panic(char *fmt, ...)
 	buf[n] = '\n';
 	putstrn(buf, n+1);
 	dumpstack();
-
-	exit(1);
 */
+    print("panicing\n");
+	exits("panic exit");
 }
 
 /* /port/allocb.c */
@@ -230,37 +225,6 @@ void
 iunlock(Lock *l)
 {
 	(void) l;
-}
-
-Proc*
-wakeup(Rendez *r)
-{
-	Proc *p = nil;
-	/*
-	int s;
-
-	s = splhi();
-
-	lock(r);
-	p = r->p;
-
-	if(p != nil){
-		lock(&p->rlock);
-		if(p->state != Wakeme || p->r != r){
-			iprint("%p %p %d\n", p->r, r, p->state);
-			panic("wakeup: state");
-		}
-		r->p = nil;
-		p->r = nil;
-		ready(p);
-		unlock(&p->rlock);
-	}
-	unlock(r);
-
-	splx(s);
-
-	*/
-	return p;
 }
 
 /* /9/port/allocb.c */
