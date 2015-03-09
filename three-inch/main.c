@@ -7,6 +7,7 @@
 #define ENTSIZE 64
 
 long sleepsem = 0;
+Proc *up;
 
 void main(void)
 {
@@ -20,6 +21,7 @@ void main(void)
 		src[i] = '!' + i;
 	src[ENTSIZE - 1] = '\0';
 	printf("payload: %s\n", src);
+	up = malloc(sizeof(*up));
 	Queue *q = qopen(QLIMIT, 0, 0, 0);
 
 	switch(pid = rfork(RFPROC|RFMEM)){
@@ -35,7 +37,7 @@ void main(void)
 		}
 		break;
 	default: /* parent: producer */
-		SLEEP(2);
+		SLEEP(0);
 		for(i = 0; i < NENTS; i++){
 			val = qwrite(q, buf, ENTSIZE);
 			if(i % 256)

@@ -1,4 +1,4 @@
-qio: qio.5 stuff.5 main.5
+main: qio.5 stuff.5 main.5
 	5l -o main qio.5 stuff.5 main.5
 
 qio.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h main.c

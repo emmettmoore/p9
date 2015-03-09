@@ -8,3 +8,4 @@
 #include	"error.h"
 
 extern long sleepsem;
+extern Proc *up;

@@ -2,10 +2,11 @@
 #include "stuff.h"
 
 /* /port/proc.c * */
-TI_Proc*
+/* TI_Proc* */
+Proc*
 wakeup(Rendez *r)
 {
-	TI_Proc *p = nil;
+	Proc *p = nil;
 
 	lock(r);
 	p = r->p;
@@ -40,8 +41,8 @@ wakeup(Rendez *r)
 void
 sleep(Rendez *r, int (*f)(void*), void *arg)
 {
-    TI_Proc* currp; // XXX TODO XXX spoof "current process" AKA up
-    currp->pid = getpid();
+    Proc* currp = malloc(sizeof(*currp)); // XXX TODO XXX spoof "current process" AKA up
+    //currp->pid = getpid();
 	lock(r);
 	lock(&currp->rlock);
 	if(r->p){

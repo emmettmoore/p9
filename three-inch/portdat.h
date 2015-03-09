@@ -73,7 +73,7 @@ struct Ref
 struct Rendez
 {
 	Lock;
-	TI_Proc	*p;
+	Proc	*p;
 };
 
 struct LockEntry

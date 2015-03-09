@@ -4,7 +4,6 @@
 /* XXX Added to qio.c */
 
 char Ehungup[30] = "i/o on hungup channel";
-Proc *up; 
 
 /* /added to qio.c */
 
@@ -917,10 +916,8 @@ qwait(Queue *q)
 {
 	/* wait for data */
 	for(;;){
-print("qwait1\n");
 		if(q->bfirst != nil)
 			break;
-print("qwait2\n");
 		if(q->state & Qclosed){
 			if(++q->eof > 3)
 				return -1;
@@ -928,12 +925,9 @@ print("qwait2\n");
 				return -1;
 			return 0;
 		}
-print("qwait3\n");
 		q->state |= Qstarve;	/* flag requesting producer to wake me */
 		iunlock(q);
-print("qwait4\n");
 		sleep(&q->rr, notempty, q); // "sleep until the queue is not empty"
-print("qwait5\n");
 		ilock(q);
 	}
 	return 1;
@@ -1142,15 +1136,12 @@ qread(Queue *q, void *vp, int len)
 {
 	Block *b, *first, **l;
 	int n;
-print("here1\n");
 	qlock(&q->rlock);
 	if(waserror()){
 		qunlock(&q->rlock);
 		nexterror();
 	}
-print("here2\n");
 	ilock(q);
-print("here3\n");
 again:
 	switch(qwait(q)){
 	case 0:
@@ -1158,15 +1149,12 @@ again:
 		iunlock(q);
 		qunlock(&q->rlock);
 		poperror();
-print("here4\n");
 		return 0;
 	case -1:
 		/* multiple reads on a closed queue */
 		iunlock(q);
 		error(q->err);
-print("here5\n");
 	}
-print("here6\n");
 	/* if we get here, there's at least one block in the queue */
 	if(q->state & Qcoalesce){
 		/* when coalescing, 0 length blocks just go away */
