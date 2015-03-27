@@ -4,7 +4,6 @@
 /* XXX Added to qio.c */
 
 char Ehungup[30] = "i/o on hungup channel";
-Proc *up; 
 
 /* /added to qio.c */
 
@@ -919,7 +918,6 @@ qwait(Queue *q)
 	for(;;){
 		if(q->bfirst != nil)
 			break;
-
 		if(q->state & Qclosed){
 			if(++q->eof > 3)
 				return -1;
@@ -927,10 +925,9 @@ qwait(Queue *q)
 				return -1;
 			return 0;
 		}
-
 		q->state |= Qstarve;	/* flag requesting producer to wake me */
 		iunlock(q);
-		sleep(&q->rr, notempty, q); // XXX See stuff.h
+		sleep(&q->rr, notempty, q); // "sleep until the queue is not empty"
 		ilock(q);
 	}
 	return 1;
@@ -1139,13 +1136,11 @@ qread(Queue *q, void *vp, int len)
 {
 	Block *b, *first, **l;
 	int n;
-
 	qlock(&q->rlock);
 	if(waserror()){
 		qunlock(&q->rlock);
 		nexterror();
 	}
-
 	ilock(q);
 again:
 	switch(qwait(q)){
@@ -1160,7 +1155,6 @@ again:
 		iunlock(q);
 		error(q->err);
 	}
-
 	/* if we get here, there's at least one block in the queue */
 	if(q->state & Qcoalesce){
 		/* when coalescing, 0 length blocks just go away */
@@ -1332,7 +1326,6 @@ qbwrite(Queue *q, Block *b)
 int
 qwrite(Queue *q, void *vp, int len)
 {
-    print("in qwrite\n");
 	int n, sofar;
 	Block *b;
 	uchar *p = vp;
@@ -1350,18 +1343,12 @@ qwrite(Queue *q, void *vp, int len)
 			freeb(b);
 			nexterror();
 		}
-        print("memmove no cigar\n");
   		//memmove(nil, nil, 0);
   		memmove(b->wp, p+sofar, n);
-        print("memmove success, poperror no cigar\n");
 		poperror();
-        print("poperror success\n");
 		b->wp += n;
-        print("wp incrememted success\n");
 		qbwrite(q, b);
-        print("qbwrite success\n");
 		sofar += n;
-        print("sofar incrememt success\n");
 	} while(sofar < len && (q->state & Qmsg) == 0);
 
 	return len;

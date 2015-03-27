@@ -34,6 +34,7 @@ typedef struct Pgrp	Pgrp;
 typedef struct Physseg	Physseg;
 typedef struct PhysUart	PhysUart;
 typedef struct Proc	Proc;
+typedef struct TI_Proc	TI_Proc;
 typedef struct Pte	Pte;
 typedef struct QLock	QLock;
 typedef struct Queue	Queue;
@@ -631,6 +632,14 @@ struct Schedq
 	Proc*	head;
 	Proc*	tail;
 	int	n;
+};
+
+/* fake proc struct used to implement sleep */
+struct TI_Proc {
+    ulong pid;
+    Rendez *r;
+	Lock	rlock;		/* sync sleep/wakeup with postnote */
+    int state;
 };
 
 struct Proc

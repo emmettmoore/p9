@@ -1,9 +1,93 @@
 #define THREEINCH
 #include "stuff.h"
 
-/*
-int up;
-*/
+/* /port/proc.c * */
+/* TI_Proc* */
+Proc*
+wakeup(Rendez *r)
+{
+	Proc *p = nil;
+
+	lock(r);
+	p = r->p;
+
+    /* if proc is sleeping */
+	if(p != nil){
+		lock(&p->rlock);
+		if(p->state != Wakeme || p->r != r){
+			panic("wakeup: state");
+		}
+		r->p = nil;
+		p->r = nil;
+        semrelease(&sleepsem, 1);
+		unlock(&p->rlock);
+	}
+	unlock(r);
+
+
+	return p;
+}
+
+
+/*  sleep if a condition is not true.  Another process will
+ *  awaken us after it sets the condition.  When we awaken
+ *  the condition may no longer be true.
+ *
+ *  we lock both the process and the rendezvous to keep r->p
+ *  and p->r synchronized.
+ *
+ * /port/proc.c
+ */
+void
+sleep(Rendez *r, int (*f)(void*), void *arg)
+{
+    Proc* currp = malloc(sizeof(*currp)); // XXX TODO XXX spoof "current process" AKA up
+    //currp->pid = getpid();
+	lock(r);
+	lock(&currp->rlock);
+	if(r->p){
+		panic("double lock in sleep\n");
+	}
+
+	/*
+	 *  Wakeup only knows there may be something to do by testing
+	 *  r->p in order to get something to lock on.
+	 *  Flush that information out to memory in case the sleep is
+	 *  committed.
+	 */
+	r->p = currp; // XXX
+    
+	if( (*f)(arg) ){
+		/*  if condition happened never mind (not sleeping). */
+		r->p = nil;
+		unlock(&currp->rlock);
+		unlock(r);
+	} else {
+		/*  now we are committed to
+		 *  change state and call scheduler
+		 */
+		currp->state = Wakeme;
+		currp->r = r;
+
+        unlock(&currp->rlock);
+        unlock(r);
+        semacquire(&sleepsem, 1);
+
+        /*
+		if(setlabel(&currp->sched)) {
+			//  here when the process is awakened
+		} else {
+			
+			//here to go to sleep (i.e. stop Running)
+			
+			unlock(&currp->rlock);
+			unlock(r);
+			// gotolabel(&m->sched); XXX
+		}
+        */
+	}
+}
+
 
 /* /port/allocb.c */
 void
@@ -74,9 +158,9 @@ panic(char *fmt, ...)
 	buf[n] = '\n';
 	putstrn(buf, n+1);
 	dumpstack();
-
-	exit(1);
 */
+    print("panicing\n");
+	exits("panic exit");
 }
 
 /* /port/allocb.c */
@@ -116,7 +200,6 @@ _allocb(int size)
 Block*
 allocb(int size)
 {
-    print("in allcob");
 	Block *b = nil;
 
 	/* Check in a process and wait until successful.
@@ -127,7 +210,6 @@ allocb(int size)
 		mallocsummary();
 		panic("allocb: no memory for %d bytes", size);
 	}
-    print(" with a successful call to the static function; i.e. no panic ahh!\n");
 	setmalloctag(b, getcallerpc(&size));
 
 	return b;
@@ -147,37 +229,6 @@ void
 iunlock(Lock *l)
 {
 	(void) l;
-}
-
-Proc*
-wakeup(Rendez *r)
-{
-	Proc *p = nil;
-	/*
-	int s;
-
-	s = splhi();
-
-	lock(r);
-	p = r->p;
-
-	if(p != nil){
-		lock(&p->rlock);
-		if(p->state != Wakeme || p->r != r){
-			iprint("%p %p %d\n", p->r, r, p->state);
-			panic("wakeup: state");
-		}
-		r->p = nil;
-		p->r = nil;
-		ready(p);
-		unlock(&p->rlock);
-	}
-	unlock(r);
-
-	splx(s);
-
-	*/
-	return p;
 }
 
 /* /9/port/allocb.c */
