@@ -25,45 +25,46 @@ void main(void)
 	Queue *q = qopen(QLIMIT, 0, 0, 0);
 
 	switch(pid = rfork(RFPROC|RFMEM)){
-	case -1: /* fork failed */
-		fprintf(stderr, "ABORT!\n");
-		abort();
-	case 0: /* child: consumer */
-        SLEEP(1);
-		for(i = 0; i < NENTS; i++){
-			val = qread(q, dest, ENTSIZE);
-			if(i % 256)
-                printf("Child consumer PID: %d\n", getpid());
-		}
-        print("exiting child consumer\n");
-        //exits("closing child consumer\n");
-		break;
-	default: /* parent: producer */
-        switch(pid = rfork(RFPROC|RFMEM)){
-            case -1: /* fork failed */
-                fprintf(stderr, "ABORT!\n");
-                abort();
-            case 0: /* child: producer */
-                for(i = 0; i < NENTS; i++){
-                    val = qwrite(q, buf, ENTSIZE);
-                    if(i % 256)
-                        printf("Child producer PID: %d\n", getpid());
-                }
-                print("exiting child produce\n");
-          //      exits("closing child producer\n");
-                break;
-            default: /* parent: producer */
-                for(i = 0; i < NENTS; i++){
-                    val = qwrite(q, buf, ENTSIZE);
-                    if(i % 256)
-                        printf("(default) Parent producer PID: %d\n", getpid());
-                }
+        case -1: /* fork failed */
+            fprintf(stderr, "ABORT!\n");
+            abort();
+        case 0: /* child: consumer */
+            SLEEP(1);
+            for(i = 0; i < NENTS; i++){
+                val = qread(q, dest, ENTSIZE);
+                if(i % 256)
+                    printf("Child consumer PID: %d\n", getpid());
+            }
+            print("exiting child consumer\n");
+            //exits("closing child consumer\n");
+            break;
+        default: /* parent: producer */
+            switch(pid = rfork(RFPROC|RFMEM)){
+                case -1: /* fork failed */
+                    fprintf(stderr, "ABORT!\n");
+                    abort();
+                case 0: /* child: producer */
+                    for(i = 0; i < NENTS; i++){
+                        val = qwrite(q, buf, ENTSIZE);
+                        if(i % 256)
+                            printf("Child producer PID: %d\n", getpid());
+                    }
+                    print("exiting child produce\n");
+                    //      exits("closing child producer\n");
+                    break;
+                default: /* parent: producer */
+                    for(i = 0; i < NENTS; i++){
+                        val = qwrite(q, buf, ENTSIZE);
+                        if(i % 256)
+                            printf("(default) Parent producer PID: %d\n", getpid());
+                    }
 
-                print("entering waitpid\n");
-                waitpid();
-                print("after waitpid???\n");
-        }
-	}
+                    print("entering waitpid\n");
+                    waitpid();
+                    waitpid();
+                    print("after waitpid???\n");
+            }
+    }
     printf("pid %d exiting\n", getpid());
 
 }

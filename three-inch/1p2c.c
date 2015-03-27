@@ -33,16 +33,29 @@ void main(void)
 		for(i = 0; i < NENTS; i++){
 			val = qread(q, dest, ENTSIZE);
 			if(i % 256)
-				printf("C: %d: qread returned %d\n", i, val);
+				printf("1C: %d: qread returned %d\n", i, val);
 		}
 		break;
 	default: /* parent: producer */
-		SLEEP(1);
-		for(i = 0; i < NENTS; i++){
-			val = qwrite(q, buf, ENTSIZE);
-			if(i % 256)
-				printf("P: %d: qwrite returned %d\n", i, val);
-		}
-		waitpid();
+        switch(pid = rfork(RFPROC|RFMEM)){
+            case -1: /* fork failed */
+                fprintf(stderr, "ABORT!\n");
+                abort();
+            case 0: /* second consuner */
+                for(i = 0; i < NENTS; i++){
+                    val = qread(q, dest, ENTSIZE);
+                    if(i % 256)
+                        printf("2C: %d: qread returned %d\n", i, val);
+                }
+                break;
+            default: /* parent: producer */
+                SLEEP(1);
+                for(i = 0; i < 2*NENTS; i++){
+                    val = qwrite(q, buf, ENTSIZE);
+                    if(i % 256)
+                        printf("P: %d: qwrite returned %d\n", i, val);
+                }
+                waitpid();
+        }
 	}
 }
