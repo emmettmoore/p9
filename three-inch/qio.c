@@ -1258,35 +1258,40 @@ qbwrite(Queue *q, Block *b)
 			return n;
 		}
 	}
-/* XXX XXX new qio algo XXX XXX */
-    while(1) {
+    /* queue the block */
+    if(q->bfirst) {
+        q->blast->next = b; 
+    }
+    else {
+        q->bfirst = b;
+        q->blast = q->bfirst; /* initialize */
+    }
+
+    /* XXX XXX new qio algo XXX XXX */
+    while(1) { 
         b->next = 0; /* E3 */
         tail = q->blast; /* E5 */
         next = tail->next; /* E6 */
         if (tail == q->blast) {
             if (next == nil) {
-                if (/* CAS XXX */1)
+                if (cas(&tail->next, next, b)) {
+                    /* XXX shouldn't this also be atomic? or locked? */
+                    q->len += BALLOC(b);
+                    q->dlen += n;
+                    QDEBUG checkb(b, "qbwrite");
+                    b = nil;
                     break;
+                }
             }
             else
-                /* CAS XXX */ (void);
+                cas(&q->blast, tail, next);
         }
     }
-    /* CAS XXX */
+    cas(&q->blast, tail, next);
 
-/* XXX XXX end of new qio algo XXX XXX */
+    /* XXX XXX end of new qio algo XXX XXX */
 
 
-    /* queue the block */
-    if(q->bfirst)
-        q->blast->next = b; /* XXX E5, E7 */
-    else
-        q->bfirst = b;
-    q->blast = b;
-    q->len += BALLOC(b);
-    q->dlen += n;
-    QDEBUG checkb(b, "qbwrite");
-    b = nil;
 
     /* make sure other end gets awakened */
     if(q->state & Qstarve){
@@ -1335,8 +1340,7 @@ qbwrite(Queue *q, Block *b)
 
     qunlock(&q->wlock);
     poperror();
-}
-return n;
+    return n;
 }
 
 /*
