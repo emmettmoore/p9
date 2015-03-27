@@ -1239,7 +1239,7 @@ qbwrite(Queue *q, Block *b)
 		nexterror();
 	}
 
-	ilock(q);
+	ilock(q); /* XXX should this stay? */
 
 	/* give up if the queue is closed */
 	if(q->state & Qclosed){
@@ -1260,11 +1260,11 @@ qbwrite(Queue *q, Block *b)
 
 	/* queue the block */
 	if(q->bfirst)
-		q->blast->next = b;
+		q->blast->next = b; /* E5, E7 */
 	else
 		q->bfirst = b;
 	q->blast = b;
-	b->next = 0;
+	b->next = 0; /* E3 */
 	q->len += BALLOC(b);
 	q->dlen += n;
 	QDEBUG checkb(b, "qbwrite");
