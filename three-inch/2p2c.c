@@ -48,7 +48,8 @@ void main(void)
                     if(i % 256)
                         printf("Child consumer PID: %d\n", getpid());
                 }
-                break;
+            waitpid();
+            break;
         }
         break;
 	default: /* parent: producer */
@@ -72,10 +73,9 @@ void main(void)
                         printf("(default) Parent producer PID: %d\n", getpid());
                 }
 
-                print("entering waitpid\n");
                 waitpid();
                 waitpid();
-                print("after waitpid???\n");
+                print("after waitpid\n");
         }
 	}
     printf("pid %d exiting\n", getpid());

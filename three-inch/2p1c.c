@@ -59,10 +59,9 @@ void main(void)
                             printf("(default) Parent producer PID: %d\n", getpid());
                     }
 
-                    print("entering waitpid\n");
                     waitpid();
                     waitpid();
-                    print("after waitpid???\n");
+                    print("after waitpid\n");
             }
     }
     printf("pid %d exiting\n", getpid());

@@ -29,7 +29,6 @@ void main(void)
 		fprintf(stderr, "ABORT!\n");
 		abort();
 	case 0: /* child: consumer */
-//		print("hey\n");			// NEED this or else it stalls forevar....
 		for(i = 0; i < NENTS; i++){
 			val = qread(q, dest, ENTSIZE);
 			if(i % 256)
@@ -41,7 +40,7 @@ void main(void)
             case -1: /* fork failed */
                 fprintf(stderr, "ABORT!\n");
                 abort();
-            case 0: /* second consuner */
+            case 0: /* second consumer */
                 for(i = 0; i < NENTS; i++){
                     val = qread(q, dest, ENTSIZE);
                     if(i % 256)
