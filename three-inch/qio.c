@@ -957,16 +957,37 @@ qaddlist(Queue *q, Block *b)
 Block*
 qremove(Queue *q)
 {
+    Block *head, *tail, *next;
 	Block *b;
 
-	b = q->bfirst;
-	if(b == nil)
-		return nil;
-	q->bfirst = b->next;
-	b->next = nil;
-	q->dlen -= BLEN(b);
-	q->len -= BALLOC(b);
-	QDEBUG checkb(b, "qremove");
+
+    /* XXX XXX new qio algo XXX XXX */
+    while(1){
+        head = q->bfirst;
+        tail = q->blast; 
+        next = head->next;
+        if (head == q->bfirst) {
+            if (head == tail) {
+                if (next == nil) {
+                    return nil;
+                }
+                cas(&q->blast, tail, next);
+                q->dlen -= BLEN(b);
+                q->len -= BALLOC(b);
+                QDEBUG checkb(b, "qremove");
+            } else {
+                b = q->bfirst;
+                if(b == nil)
+                    return nil;
+                b->next = nil;
+                if (cas(q->bfirst, head, next)) {
+                    break;
+                }
+            }
+        }
+    }
+        /* XXX XXX end new qio algo XXX XXX */
+
 	return b;
 }
 
@@ -1063,7 +1084,7 @@ qwakeup_iunlock(Queue *q)
 	else
 		dowakeup = 0;
 
-	iunlock(q);
+	// XXX iunlock(q);
 
 	/* wakeup flow controlled writers */
 	if(dowakeup){
@@ -1082,23 +1103,23 @@ qbread(Queue *q, int len)
 	Block *b, *nb;
 	int n;
 
-	qlock(&q->rlock);
+// XXX	qlock(&q->rlock);
 	if(waserror()){
-		qunlock(&q->rlock);
+	// XXX	qunlock(&q->rlock);
 		nexterror();
 	}
 
-	ilock(q);
+	// XXX ilock(q);
 	switch(qwait(q)){
 	case 0:
 		/* queue closed */
-		iunlock(q);
-		qunlock(&q->rlock);
-		poperror();
+        // XXX iunlock(q);
+        // XXX qunlock(&q->rlock);
+        poperror();
 		return nil;
 	case -1:
 		/* multiple reads on a closed queue */
-		iunlock(q);
+	// XXX	iunlock(q);
 		error(q->err);
 	}
 
@@ -1123,7 +1144,7 @@ qbread(Queue *q, int len)
 	qwakeup_iunlock(q);
 
 	poperror();
-	qunlock(&q->rlock);
+// XXX	qunlock(&q->rlock);
 	return nb;
 }
 
@@ -1220,7 +1241,7 @@ qbwrite(Queue *q, Block *b)
 {
 	int n, dowakeup;
 	Proc *p;
-    Block* tail, next;
+    Block *tail, *next;
 
 	counter(Cqbwritecnt);
 
@@ -1232,28 +1253,28 @@ qbwrite(Queue *q, Block *b)
 	}
 
 	dowakeup = 0;
-	qlock(&q->wlock);
+//XXX	qlock(&q->wlock);
 	if(waserror()){
 		if(b != nil)
 			freeb(b);
-		qunlock(&q->wlock);
+	//XXX	qunlock(&q->wlock);
 		nexterror();
 	}
 
-	ilock(q); /* XXX should this stay? */
+//	ilock(q); /* XXX should this stay? */
 
 	/* give up if the queue is closed */
 	if(q->state & Qclosed){
-		iunlock(q);
+//XXX		iunlock(q);
 		error(q->err);
 	}
 
 	/* if nonblocking, don't queue over the limit */
 	if(q->len >= q->limit){
 		if(q->noblock){
-			iunlock(q);
+	//XXX		iunlock(q);
 			freeb(b);
-			qunlock(&q->wlock);
+		//XXX	qunlock(&q->wlock);
 			poperror();
 			return n;
 		}
@@ -1274,7 +1295,7 @@ qbwrite(Queue *q, Block *b)
         next = tail->next; /* E6 */
         if (tail == q->blast) {
             if (next == nil) {
-                if (cas(&tail->next, next, b)) {
+                if (cas((ulong *) &tail->next, (ulong) next, (ulong) b)) {
                     /* XXX shouldn't this also be atomic? or locked? */
                     q->len += BALLOC(b);
                     q->dlen += n;
@@ -1284,10 +1305,10 @@ qbwrite(Queue *q, Block *b)
                 }
             }
             else
-                cas(&q->blast, tail, next);
+                cas((ulong *) &q->blast, (ulong) tail, (ulong) next);
         }
     }
-    cas(&q->blast, tail, next);
+    cas((ulong *) &q->blast, (ulong) tail, (ulong) next);
 
     /* XXX XXX end of new qio algo XXX XXX */
 
@@ -1298,7 +1319,7 @@ qbwrite(Queue *q, Block *b)
         q->state &= ~Qstarve;
         dowakeup = 1;
     }
-    iunlock(q);
+//XXX    iunlock(q);
 
     /*  get output going again */
     if(q->kick && (dowakeup || (q->state&Qkick)))
@@ -1331,14 +1352,14 @@ qbwrite(Queue *q, Block *b)
         if(q->noblock || qnotfull(q))
             break;
 
-        ilock(q);
+//XXX        ilock(q);
         q->state |= Qflow;
-        iunlock(q);
+    // XXX   iunlock(q);
         sleep(&q->wr, qnotfull, q);
     }
     USED(b);
 
-    qunlock(&q->wlock);
+    // XXX qunlock(&q->wlock);
     poperror();
     return n;
 }
