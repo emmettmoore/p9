@@ -37,7 +37,7 @@ void main(void)
 		}
 		break;
 	default: /* parent: producer */
-		SLEEP(0);
+		SLEEP(1);
 		for(i = 0; i < NENTS; i++){
 			val = qwrite(q, buf, ENTSIZE);
 			if(i % 256)
