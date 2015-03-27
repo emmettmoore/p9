@@ -1220,7 +1220,6 @@ qbwrite(Queue *q, Block *b)
 {
 	int n, dowakeup;
 	Proc *p;
-    Block* tail, next;
 
 	counter(Cqbwritecnt);
 
@@ -1258,85 +1257,67 @@ qbwrite(Queue *q, Block *b)
 			return n;
 		}
 	}
-/* XXX XXX new qio algo XXX XXX */
-    while(1) {
-        b->next = 0; /* E3 */
-        tail = q->blast; /* E5 */
-        next = tail->next; /* E6 */
-        if (tail == q->blast) {
-            if (next == nil) {
-                if (/* CAS XXX */1)
-                    break;
-            }
-            else
-                /* CAS XXX */ (void);
-        }
-    }
-    /* CAS XXX */
 
-/* XXX XXX end of new qio algo XXX XXX */
+	/* queue the block */
+	if(q->bfirst)
+		q->blast->next = b; /* E5, E7 */
+	else
+		q->bfirst = b;
+	q->blast = b;
+	b->next = 0; /* E3 */
+	q->len += BALLOC(b);
+	q->dlen += n;
+	QDEBUG checkb(b, "qbwrite");
+	b = nil;
 
+	/* make sure other end gets awakened */
+	if(q->state & Qstarve){
+		q->state &= ~Qstarve;
+		dowakeup = 1;
+	}
+	iunlock(q);
 
-    /* queue the block */
-    if(q->bfirst)
-        q->blast->next = b; /* XXX E5, E7 */
-    else
-        q->bfirst = b;
-    q->blast = b;
-    q->len += BALLOC(b);
-    q->dlen += n;
-    QDEBUG checkb(b, "qbwrite");
-    b = nil;
+	/*  get output going again */
+	if(q->kick && (dowakeup || (q->state&Qkick)))
+		q->kick(q->arg);
 
-    /* make sure other end gets awakened */
-    if(q->state & Qstarve){
-        q->state &= ~Qstarve;
-        dowakeup = 1;
-    }
-    iunlock(q);
+	/* wakeup anyone consuming at the other end */
+	if(dowakeup){
+		p = wakeup(&q->rr);
 
-    /*  get output going again */
-    if(q->kick && (dowakeup || (q->state&Qkick)))
-        q->kick(q->arg);
+		/* if we just wokeup a higher priority process, let it run */
+		if(p != nil && p->priority > up->priority){
+			counter(Cqbwritepricnt);
+			sched();
+		}
+	}
 
-    /* wakeup anyone consuming at the other end */
-    if(dowakeup){
-        p = wakeup(&q->rr);
+	/*
+	 *  flow control, wait for queue to get below the limit
+	 *  before allowing the process to continue and queue
+	 *  more.  We do this here so that postnote can only
+	 *  interrupt us after the data has been queued.  This
+	 *  means that things like 9p flushes and ssl messages
+	 *  will not be disrupted by software interrupts.
+	 *
+	 *  Note - this is moderately dangerous since a process
+	 *  that keeps getting interrupted and rewriting will
+	 *  queue infinite crud.
+	 */
+	for(;;){
+		if(q->noblock || qnotfull(q))
+			break;
 
-        /* if we just wokeup a higher priority process, let it run */
-        if(p != nil && p->priority > up->priority){
-            counter(Cqbwritepricnt);
-            sched();
-        }
-    }
+		ilock(q);
+		q->state |= Qflow;
+		iunlock(q);
+		sleep(&q->wr, qnotfull, q);
+	}
+	USED(b);
 
-    /*
-     *  flow control, wait for queue to get below the limit
-     *  before allowing the process to continue and queue
-     *  more.  We do this here so that postnote can only
-     *  interrupt us after the data has been queued.  This
-     *  means that things like 9p flushes and ssl messages
-     *  will not be disrupted by software interrupts.
-     *
-     *  Note - this is moderately dangerous since a process
-     *  that keeps getting interrupted and rewriting will
-     *  queue infinite crud.
-     */
-    for(;;){
-        if(q->noblock || qnotfull(q))
-            break;
-
-        ilock(q);
-        q->state |= Qflow;
-        iunlock(q);
-        sleep(&q->wr, qnotfull, q);
-    }
-    USED(b);
-
-    qunlock(&q->wlock);
-    poperror();
-}
-return n;
+	qunlock(&q->wlock);
+	poperror();
+	return n;
 }
 
 /*
