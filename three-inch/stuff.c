@@ -134,32 +134,31 @@ freeb(Block *b)
 void
 panic(char *fmt, ...)
 {
-	/*
 	int n, s;
 	va_list arg;
 	char buf[PRINTSIZE];
 
-	kprintoq = nil;*/	/* don't try to write to /dev/kprint */
-/*
-	if(panicking)
-		for(;;);
-	panicking = 1;
+//	kprintoq = nil;	/* don't try to write to /dev/kprint */
 
-	s = splhi();
+//	if(panicking)
+//		for(;;);
+//	panicking = 1;
+
+//	s = splhi();
+
 	strcpy(buf, "panic: ");
 	va_start(arg, fmt);
 	n = vseprint(buf+strlen(buf), buf+sizeof(buf), fmt, arg) - buf;
 	va_end(arg);
-	iprint("%s\n", buf);
-	if(consdebug)
-		(*consdebug)();
-	splx(s);
-	prflush();
-	buf[n] = '\n';
-	putstrn(buf, n+1);
-	dumpstack();
-*/
-    print("panicing\n");
+	print("%s\n", buf);
+//	if(consdebug)
+//		(*consdebug)();
+//	splx(s);
+//	prflush();
+//	buf[n] = '\n';
+//	putstrn(buf, n+1);
+//	dumpstack();
+
 	exits("panic exit");
 }
 
