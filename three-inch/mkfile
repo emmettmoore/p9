@@ -1,3 +1,5 @@
+all:V: 1p1c 2p1c 1p2c 2p2c
+
 1p1c: qio.5 stuff.5 1p1c.5
 	5l -o 1p1c qio.5 stuff.5 1p1c.5
 
@@ -21,6 +23,9 @@ stuff.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h 
 
 2p1c.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h 2p1c.c
 	5c 2p1c.c
+
+1p2c.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h 1p2c.c
+	5c 1p2c.c
 
 2p2c.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h 2p2c.c
 	5c 2p2c.c
