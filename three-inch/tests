@@ -1,0 +1,2 @@
+#!/bin/rc
+for(i in ?p?c) $i
