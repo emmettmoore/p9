@@ -471,22 +471,36 @@ Block*
 qget(Queue *q)
 {
 	int dowakeup;
-	Block *b;
-
+	Block *head = q->bfirst;
+	Block *tail = q->blast;
+	Block *next = hd->next;
+    Block *ret;
 	/* sync with qwrite */
 	ilock(q);
 
-	b = q->bfirst;
-	if(b == nil){
-		q->state |= Qstarve;
-		iunlock(q);
-		return nil;
-	}
-	q->bfirst = b->next;
-	b->next = 0;
-	q->len -= BALLOC(b);
-	q->dlen -= BLEN(b);
-	QDEBUG checkb(b, "qget");
+    if (head == q->bfirst) {
+        if (head == tail) {
+            if (next == nil) { 
+                /* queue is empty */
+                q->state |= Qstarve;
+                iunlock(q);
+                return nil;
+            } 
+            /* cas(&q->blast, tail, next); */ /* not needed for dummy node step */
+        }
+        else {
+            ret = copyblock(next, BLEN(next));
+            q->bfirst = b->next;
+            /* don't need to clear contents of new head b/c its dummy,
+             * but do need to free it.
+             */
+            freeb(head);
+            free(head);
+            q->len -= BALLOC(b);
+            q->dlen -= BLEN(b);
+            QDEBUG checkb(b, "qget");
+        }
+    }
 
 	/* if writer flow controlled, restart */
 	if((q->state & Qflow) && q->len < q->limit/2){
@@ -500,7 +514,7 @@ qget(Queue *q)
 	if(dowakeup)
 		wakeup(&q->wr);
 
-	return b;
+	return ret;
 }
 
 /*
