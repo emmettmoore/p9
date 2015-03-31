@@ -532,14 +532,13 @@ qdiscard(Queue *q, int len)
         next = head->next;
 		if(next == nil) /* queue is empty */
 			break;
-		QDEBUG checkb(b, "qdiscard");
-		n = BLEN(b);
+		QDEBUG checkb(next, "qdiscard");
+		n = BLEN(next);
 		if(n <= len - sofar){ /* del entire block */
-			q->bfirst = b->next;
-            freeb(head);
-			q->len -= BALLOC(b);
-			q->dlen -= BLEN(b);
-			freeb(b);
+			q->bfirst = head->next;
+			q->len -= BALLOC(next);
+			q->dlen -= BLEN(next);
+			freeb(head);
 		} else { /* del partial block */
 			n = len - sofar;
 			next->rp += n;
