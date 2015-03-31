@@ -473,7 +473,7 @@ qget(Queue *q)
 	int dowakeup;
 	Block *head = q->bfirst;
 	Block *tail = q->blast;
-	Block *next = hd->next;
+	Block *next = head->next;
     Block *ret;
 	/* sync with qwrite */
 	ilock(q);
