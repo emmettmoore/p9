@@ -495,7 +495,6 @@ qget(Queue *q)
              * but do need to free it.
              */
             freeb(head);
-            free(head);
             q->len -= BALLOC(b);
             q->dlen -= BLEN(b);
             QDEBUG checkb(b, "qget");
@@ -523,25 +522,27 @@ qget(Queue *q)
 int
 qdiscard(Queue *q, int len)
 {
-	Block *b;
+	Block *head;
+	Block *next;
 	int dowakeup, n, sofar;
 
 	ilock(q);
 	for(sofar = 0; sofar < len; sofar += n){
-		b = q->bfirst;
-		if(b == nil)
+		head = q->bfirst;
+        next = head->next;
+		if(next == nil) /* queue is empty */
 			break;
 		QDEBUG checkb(b, "qdiscard");
 		n = BLEN(b);
-		if(n <= len - sofar){
+		if(n <= len - sofar){ /* del entire block */
 			q->bfirst = b->next;
-			b->next = 0;
+            freeb(head);
 			q->len -= BALLOC(b);
 			q->dlen -= BLEN(b);
 			freeb(b);
-		} else {
+		} else { /* del partial block */
 			n = len - sofar;
-			b->rp += n;
+			next->rp += n;
 			q->dlen -= n;
 		}
 	}
