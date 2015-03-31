@@ -490,14 +490,14 @@ qget(Queue *q)
         }
         else {
             ret = copyblock(next, BLEN(next));
-            q->bfirst = b->next;
+            q->bfirst = next;
             /* don't need to clear contents of new head b/c its dummy,
              * but do need to free it.
              */
             freeb(head);
-            q->len -= BALLOC(b);
-            q->dlen -= BLEN(b);
-            QDEBUG checkb(b, "qget");
+            q->len -= BALLOC(next);
+            q->dlen -= BLEN(next);
+            QDEBUG checkb(next, "qget");
         }
     }
 
@@ -576,7 +576,7 @@ qdiscard(Queue *q, int len)
 int
 qconsume(Queue *q, void *vp, int len)
 {
-	Block *b;
+	Block *head;
 	int n, dowakeup;
 	uchar *p = vp;
 	Block *tofree = nil;
@@ -585,42 +585,42 @@ qconsume(Queue *q, void *vp, int len)
 	ilock(q);
 
 	for(;;) {
-		b = q->bfirst;
-		if(b == 0){
+		head = q->bfirst;
+		next = head->next;
+		if(next == nil){
 			q->state |= Qstarve;
 			iunlock(q);
 			return -1;
 		}
-		QDEBUG checkb(b, "qconsume 1");
+		QDEBUG checkb(next, "qconsume 1");
 
-		n = BLEN(b);
+		n = BLEN(next);
 		if(n > 0)
 			break;
-		q->bfirst = b->next;
-		q->len -= BALLOC(b);
+		q->bfirst = next;
+		q->len -= BALLOC(next);
 
 		/* remember to free this */
-		b->next = tofree;
-		tofree = b;
+		head->next = tofree;
+		tofree = head;
 	};
 
 	if(n < len)
 		len = n;
-	memmove(p, b->rp, len);
+	memmove(p, next->rp, len);
 	bytes(Cconsumebytes, n);
-	b->rp += len;
+	next->rp += len;
 	q->dlen -= len;
 
 	/* discard the block if we're done with it */
 	if((q->state & Qmsg) || len == n){
-		q->bfirst = b->next;
-		b->next = 0;
-		q->len -= BALLOC(b);
-		q->dlen -= BLEN(b);
+		q->bfirst = next;
+		q->len -= BALLOC(next);
+		q->dlen -= BLEN(next);
 
 		/* remember to free this */
-		b->next = tofree;
-		tofree = b;
+		head->next = tofree;
+		tofree = head;
 	}
 
 	/* if writer flow controlled, restart */
