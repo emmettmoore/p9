@@ -1065,10 +1065,8 @@ mem2bl(uchar *p, int len)
 void
 qputback(Queue *q, Block *b)
 {
-	b->next = q->bfirst;
-	if(q->bfirst == nil)
-		q->blast = b;
-	q->bfirst = b;
+	b->next = q->bfirst->next;
+	q->bfirst->next = b;
 	q->len += BALLOC(b);
 	q->dlen += BLEN(b);
 }
