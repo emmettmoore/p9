@@ -903,6 +903,7 @@ Queue*
 qbypass(void (*bypass)(void*, Block*), void *arg)
 {
 	Queue *q;
+    Block *dummy;
 
 	q = malloc(sizeof(Queue));
 	if(q == 0)
@@ -983,6 +984,7 @@ qremove(Queue *q)
 {
 	Block *head = q->bfirst;
 	Block *next;
+	Block *ret;
 	if(q->bfirst == q->blast) /* queue empty */
 		return nil;
 	next = q->bfirst->next;
@@ -1284,10 +1286,8 @@ qbwrite(Queue *q, Block *b)
 	}
 
 	/* queue the block */
-	if(q->bfirst)
-		q->blast->next = b;
-	else
-		q->bfirst = b;
+    q->blast->next = b;
+
 	q->blast = b;
 	b->next = 0;
 	q->len += BALLOC(b);
@@ -1419,10 +1419,8 @@ qiwrite(Queue *q, void *vp, int len)
 		}
 
 		QDEBUG checkb(b, "qiwrite");
-		if(q->bfirst)
-			q->blast->next = b;
-		else
-			q->bfirst = b;
+        q->blast->next = b;
+
 		q->blast = b;
 		q->len += BALLOC(b);
 		q->dlen += n;
@@ -1550,7 +1548,7 @@ qcnt(Queue *q)
 
 	n = 0;
 	ilock(q);
-	for(b = q->bfirst; b != nil; b = b->next)
+	for(b = q->bfirst->next; b != nil; b = b->next)
 		n++;
 	iunlock(q);
 	return n;
@@ -1576,7 +1574,7 @@ qwindow(Queue *q)
 int
 qcanread(Queue *q)
 {
-	return q->bfirst!=0;
+	return q->bfirst!=q->blast;
 }
 
 /*
