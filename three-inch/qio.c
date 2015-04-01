@@ -888,7 +888,7 @@ qopen(int limit, int msg, void (*kick)(void*), void *arg)
     /* add dummy node */
 	dummy = allocb(0);
 	if(waserror()) { // XXX is this error handling needed?
-		freeb(b);
+		freeb(dummy);
 		nexterror();
 	}
 	q->bfirst = dummy;
@@ -913,6 +913,15 @@ qbypass(void (*bypass)(void*, Block*), void *arg)
 	q->bypass = bypass;
 	q->state = 0;
 
+	dummy = allocb(0);
+	if(waserror()) { // XXX is this error handling needed?
+		freeb(dummy);
+		nexterror();
+	}
+	q->bfirst = dummy;
+	q->blast = q->bfirst;
+	dummy->next = 0;
+
 	return q;
 }
 
@@ -921,7 +930,7 @@ notempty(void *a)
 {
 	Queue *q = a;
 
-	return (q->state & Qclosed) || q->bfirst != 0;
+	return (q->state & Qclosed) || q->bfirst != q->blast;
 }
 
 /*
