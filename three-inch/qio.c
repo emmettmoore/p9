@@ -870,7 +870,7 @@ Queue*
 qopen(int limit, int msg, void (*kick)(void*), void *arg)
 {
 	Queue *q;
-    char dummy[Hdrspc] = "dummy";
+	Block *dummy;
 
 	q = malloc(sizeof(Queue));
 	if(q == 0)
@@ -886,7 +886,13 @@ qopen(int limit, int msg, void (*kick)(void*), void *arg)
 	q->noblock = 0;
 
     /* add dummy node */
-    qwrite(q, dummy, Hdrspc);
+	dummy = allocb(0);
+	if(waserror()) { // XXX is this error handling needed?
+		freeb(b);
+		nexterror();
+	}
+	q->bfirst = dummy;
+	dummy->next = 0;
 
 	return q;
 }
