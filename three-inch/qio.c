@@ -576,7 +576,7 @@ qdiscard(Queue *q, int len)
 int
 qconsume(Queue *q, void *vp, int len)
 {
-	Block *head;
+	Block *head, *next;
 	int n, dowakeup;
 	uchar *p = vp;
 	Block *tofree = nil;
@@ -662,10 +662,7 @@ qpass(Queue *q, Block *b)
 	}
 
 	/* add buffer to queue */
-	if(q->bfirst)
-		q->blast->next = b;
-	else
-		q->bfirst = b;
+    q->blast->next = b;
 	len = BALLOC(b);
 	dlen = BLEN(b);
 	QDEBUG checkb(b, "qpass");
@@ -711,10 +708,7 @@ qpassnolim(Queue *q, Block *b)
 	}
 
 	/* add buffer to queue */
-	if(q->bfirst)
-		q->blast->next = b;
-	else
-		q->bfirst = b;
+    q->blast->next = b;
 	len = BALLOC(b);
 	dlen = BLEN(b);
 	QDEBUG checkb(b, "qpass");
@@ -795,10 +789,8 @@ qproduce(Queue *q, void *vp, int len)
 	memmove(b->wp, p, len);
 	bytes(Cproducebytes, len);
 	b->wp += len;
-	if(q->bfirst)
-		q->blast->next = b;
-	else
-		q->bfirst = b;
+
+    q->blast->next = b;
 	q->blast = b;
 	/* b->next = 0; done by iallocb() */
 	q->len += BALLOC(b);
@@ -836,7 +828,7 @@ qcopy(Queue *q, int len, ulong offset)
 	ilock(q);
 
 	/* go to offset */
-	b = q->bfirst;
+	b = q->bfirst->next;
 	for(sofar = 0; ; sofar += n){
 		if(b == nil){
 			iunlock(q);
