@@ -892,6 +892,7 @@ qopen(int limit, int msg, void (*kick)(void*), void *arg)
 		nexterror();
 	}
 	q->bfirst = dummy;
+	q->blast = q->bfirst;
 	dummy->next = 0;
 
 	return q;
