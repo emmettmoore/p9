@@ -966,10 +966,8 @@ void
 qaddlist(Queue *q, Block *b)
 {
 	/* queue the block */
-	if(q->bfirst)
-		q->blast->next = b;
-	else
-		q->bfirst = b;
+    q->blast->next = b;
+
 	q->len += blockalloclen(b);
 	q->dlen += blocklen(b);
 	while(b->next)
@@ -983,17 +981,20 @@ qaddlist(Queue *q, Block *b)
 Block*
 qremove(Queue *q)
 {
-	Block *b;
-
-	b = q->bfirst;
-	if(b == nil)
+	Block *head = q->bfirst;
+	Block *next;
+	if(q->bfirst == q->blast) /* queue empty */
 		return nil;
-	q->bfirst = b->next;
-	b->next = nil;
-	q->dlen -= BLEN(b);
-	q->len -= BALLOC(b);
-	QDEBUG checkb(b, "qremove");
-	return b;
+	next = q->bfirst->next;
+	head->next = nil;
+    ret = copyblock(next, BLEN(next));
+	q->bfirst = next;
+
+    freeb(head);
+	q->dlen -= BLEN(next);
+	q->len -= BALLOC(next);
+	QDEBUG checkb(ret, "qremove");
+	return ret;
 }
 
 /*
