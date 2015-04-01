@@ -870,6 +870,7 @@ Queue*
 qopen(int limit, int msg, void (*kick)(void*), void *arg)
 {
 	Queue *q;
+    char dummy[Hdrspc] = "dummy";
 
 	q = malloc(sizeof(Queue));
 	if(q == 0)
@@ -883,6 +884,9 @@ qopen(int limit, int msg, void (*kick)(void*), void *arg)
 	q->state |= Qstarve;
 	q->eof = 0;
 	q->noblock = 0;
+
+    /* add dummy node */
+    qwrite(q, dummy, Hdrspc);
 
 	return q;
 }
@@ -922,7 +926,7 @@ qwait(Queue *q)
 {
 	/* wait for data */
 	for(;;){
-		if(q->bfirst != nil)
+		if(q->bfirst == q->blast)
 			break;
 		if(q->state & Qclosed){
 			if(++q->eof > 3)
