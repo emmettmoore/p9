@@ -1206,7 +1206,6 @@ again:
 		}
 	} else {
 		first = qremove(q);
-        print("%d\n", first);
 		n = BLEN(first);
 	}
 
