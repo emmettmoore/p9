@@ -943,7 +943,7 @@ qwait(Queue *q)
 {
 	/* wait for data */
 	for(;;){
-		if(q->bfirst == q->blast)
+		if(q->bfirst != q->blast)
 			break;
 		if(q->state & Qclosed){
 			if(++q->eof > 3)
@@ -1206,6 +1206,7 @@ again:
 		}
 	} else {
 		first = qremove(q);
+        print("%d\n", first);
 		n = BLEN(first);
 	}
 
