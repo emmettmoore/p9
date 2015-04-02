@@ -17,13 +17,12 @@ void main(void)
 	char dest[ENTSIZE];
 
 	print("basic starting\n");
-	for(i = 0; i < ENTSIZE; i++)
-		src[i] = '!' + i;
 	src[ENTSIZE - 1] = '\0';
 	up = malloc(sizeof(*up));
 	Queue *q = qopen(QLIMIT, 0, 0, 0);
 
 	for(i = 0; i < NENTS; i++){
+		sprint(src, "this is the contents of block %d\n", i);
 		val = qwrite(q, src, ENTSIZE);
 		if(val != ENTSIZE)
 			fprintf(stderr, "P: qwrite returned %d, expecting %d\n", val, ENTSIZE);
@@ -31,6 +30,7 @@ void main(void)
 
 	for(i = 0; i < NENTS; i++){
 		val = qread(q, dest, ENTSIZE);
+		print("dest: %s", dest);
 		if(val != ENTSIZE)
 			fprintf(stderr, "C: qread returned %d, expecting %d\n", val, ENTSIZE);
 	}

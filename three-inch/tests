@@ -1,2 +1,9 @@
 #!/bin/rc
-for(i in ?p?c) $i
+# tests with >1 producer or consumer won't always read/write in
+# the same order, so these tests are less comprehensive for those.
+# t/$i.out contains the expected output for each test.
+
+for(i in basic ?p?c){
+	$i >out
+	if(! cmp -s out t/$i.out) echo $i BAD
+}
