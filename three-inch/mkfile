@@ -1,4 +1,7 @@
-all:V: basic 1p1c 2p1c 1p2c 2p2c
+all:V: qconsume basic 1p1c 2p1c 1p2c 2p2c
+
+qconsume: qio.5 stuff.5 qconsume.5
+	5l -o qconsume qio.5 stuff.5 qconsume.5
 
 basic: qio.5 stuff.5 basic.5
 	5l -o basic qio.5 stuff.5 basic.5
@@ -14,6 +17,10 @@ basic: qio.5 stuff.5 basic.5
 
 2p2c: qio.5 stuff.5 2p2c.5
     5l -o 2p2c qio.5 stuff.5 2p2c.5
+
+
+qconsume.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h basic.c
+	5c qconsume.c
 
 qio.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h
 	5c qio.c
@@ -42,3 +49,5 @@ clean:
     rm -f 2p1c
     rm -f 1p2c
     rm -f 2p2c
+    rm -f basic
+    rm -f qconsume
