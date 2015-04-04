@@ -48,3 +48,6 @@ clean:
     rm -f 2p1c
     rm -f 1p2c
     rm -f 2p2c
+    rm -f basic
+    rm -f main
+    rm -f 1p1c_qbr
