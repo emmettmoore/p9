@@ -1,4 +1,3 @@
-
 #define THREEINCH
 #include "stuff.h"
 #include <stdio.h>
@@ -14,13 +13,10 @@ void main(void)
 {
 	int pid, val, i;
 	char c;
-	char src[ENTSIZE];
+	char src[ENTSIZE ];
 	char dest[ENTSIZE];
-    char *data;
-    Block *b = allocb(ENTSIZE);
 
-
-	print("1p1c_qbr starting\n");
+	print("1p1c_qproduce starting\n");
 	for(i = 0; i < ENTSIZE; i++)
 		src[i] = '!' + i;
 	src[ENTSIZE - 1] = '\0';
@@ -33,19 +29,20 @@ void main(void)
 		abort();
 	case 0: /* child: consumer */
 		for(i = 0; i < NENTS; i++){
-			b = qbread(q, 999);
-            data = (char *)b->rp;
-            print("data: %s", data);
+			val = qread(q, dest, ENTSIZE);
+            print("dest: %s", dest);
+			if(val != ENTSIZE)
+				fprintf(stderr, "C: qread returned %d, expecting %d\n", val, ENTSIZE);
 		}
 		break;
 	default: /* parent: producer */
 		for(i = 0; i < NENTS; i++){
             sprint(src, "this is the contents of block %d\n", i);
-			val = qwrite(q, src, ENTSIZE);
+			val = qproduce(q, src, ENTSIZE);
 			if(val != ENTSIZE)
 				fprintf(stderr, "P: qwrite returned %d, expecting %d\n", val, ENTSIZE);
 		}
 		waitpid();
-		print("1p1c_qbr complete\n");
+		print("1p1c_qproduce complete\n");
 	}
 }
