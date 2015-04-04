@@ -6,9 +6,6 @@ qconsume: qio.5 stuff.5 qconsume.5
 basic: qio.5 stuff.5 basic.5
 	5l -o basic qio.5 stuff.5 basic.5
 
-1p1c: qio.5 stuff.5 1p1c.5
-	5l -o 1p1c qio.5 stuff.5 1p1c.5
-
 qbread: qio.5 stuff.5 qbread.5
 	5l -o qbread qio.5 stuff.5 qbread.5
 
@@ -17,6 +14,12 @@ qcopy: qio.5 stuff.5 qcopy.5
 
 qproduce: qio.5 stuff.5 qproduce.5
 	5l -o qproduce qio.5 stuff.5 qproduce.5
+
+qdiscard: qio.5 stuff.5 qdiscard.5
+	5l -o qdiscard qio.5 stuff.5 qdiscard.5
+
+1p1c: qio.5 stuff.5 1p1c.5
+	5l -o 1p1c qio.5 stuff.5 1p1c.5
 
 2p1c: qio.5 stuff.5 2p1c.5
     5l -o 2p1c qio.5 stuff.5 2p1c.5
@@ -27,29 +30,14 @@ qproduce: qio.5 stuff.5 qproduce.5
 2p2c: qio.5 stuff.5 2p2c.5
     5l -o 2p2c qio.5 stuff.5 2p2c.5
 
-qconsume.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h basic.c
-	5c qconsume.c
-
 qio.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h
 	5c qio.c
 
 stuff.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h
 	5c stuff.c
 
-basic.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h basic.c
-	5c basic.c
-
 1p1c.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h 1p1c.c
 	5c 1p1c.c
-
-qbread.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h qbread.c
-	5c qbread.c
-
-qcopy.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h qcopy.c
-	5c qcopy.c
-
-qproduce.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h qproduce.c
-	5c qproduce.c
 
 2p1c.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h 2p1c.c
 	5c 2p1c.c
@@ -59,6 +47,24 @@ qproduce.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u
 
 2p2c.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h 2p2c.c
 	5c 2p2c.c
+
+basic.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h basic.c
+	5c basic.c
+
+qbread.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h qbread.c
+	5c qbread.c
+
+qcopy.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h qcopy.c
+	5c qcopy.c
+
+qconsume.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h basic.c
+	5c qconsume.c
+
+qproduce.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h qproduce.c
+	5c qproduce.c
+
+qdiscard.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h qdiscard.c
+	5c qdiscard.c
 
 clean: 
     rm -f *.5
@@ -72,4 +78,5 @@ clean:
     rm -f qbread
     rm -f qcopy
     rm -f qproduce
+    rm -f qdiscard
 
