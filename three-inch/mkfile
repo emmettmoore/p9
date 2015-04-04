@@ -9,8 +9,11 @@ basic: qio.5 stuff.5 basic.5
 1p1c: qio.5 stuff.5 1p1c.5
 	5l -o 1p1c qio.5 stuff.5 1p1c.5
 
-qbread: qio.5 stuff.5 1p1c_qbr.5
+qbread: qio.5 stuff.5 qbread.5
 	5l -o qbread qio.5 stuff.5 qbread.5
+
+qcopy: qio.5 stuff.5 qcopy.5
+	5l -o qcopy qio.5 stuff.5 qcopy.5
 
 qproduce: qio.5 stuff.5 qproduce.5
 	5l -o qproduce qio.5 stuff.5 qproduce.5
@@ -42,6 +45,9 @@ basic.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h 
 qbread.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h qbread.c
 	5c qbread.c
 
+qcopy.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h qcopy.c
+	5c qcopy.c
+
 qproduce.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h qproduce.c
 	5c qproduce.c
 
@@ -64,5 +70,6 @@ clean:
     rm -f qconsume
     rm -f main
     rm -f qbread
+    rm -f qcopy
     rm -f qproduce
 
