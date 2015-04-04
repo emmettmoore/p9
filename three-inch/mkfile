@@ -1,4 +1,4 @@
-all:V: qget qconsume basic 1p1c 2p1c 1p2c 2p2c
+all:V: qget qconsume qbread qcopy qproduce qdiscard basic 1p1c 2p1c 1p2c 2p2c
 
 qconsume: qio.5 stuff.5 qconsume.5
 	5l -o qconsume qio.5 stuff.5 qconsume.5
