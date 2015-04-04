@@ -9,11 +9,11 @@ basic: qio.5 stuff.5 basic.5
 1p1c: qio.5 stuff.5 1p1c.5
 	5l -o 1p1c qio.5 stuff.5 1p1c.5
 
-1p1c_qbr: qio.5 stuff.5 1p1c_qbr.5
-	5l -o 1p1c_qbr qio.5 stuff.5 1p1c_qbr.5
+qbread: qio.5 stuff.5 1p1c_qbr.5
+	5l -o qbread qio.5 stuff.5 qbread.5
 
-1p1c_qpro: qio.5 stuff.5 1p1c_qpro.5
-	5l -o 1p1c_qpro qio.5 stuff.5 1p1c_qpro.5
+qproduce: qio.5 stuff.5 qproduce.5
+	5l -o qproduce qio.5 stuff.5 qproduce.5
 
 2p1c: qio.5 stuff.5 2p1c.5
     5l -o 2p1c qio.5 stuff.5 2p1c.5
@@ -23,7 +23,6 @@ basic: qio.5 stuff.5 basic.5
 
 2p2c: qio.5 stuff.5 2p2c.5
     5l -o 2p2c qio.5 stuff.5 2p2c.5
-
 
 qconsume.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h basic.c
 	5c qconsume.c
@@ -40,11 +39,11 @@ basic.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h 
 1p1c.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h 1p1c.c
 	5c 1p1c.c
 
-1p1c_qbr.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h 1p1c_qbr.c
-	5c 1p1c_qbr.c
+qbread.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h qbread.c
+	5c qbread.c
 
-1p1c_qpro.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h 1p1c_qpro.c
-	5c 1p1c_qpro.c
+qproduce.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h qproduce.c
+	5c qproduce.c
 
 2p1c.5: qio.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h 2p1c.c
 	5c 2p1c.c
@@ -64,6 +63,6 @@ clean:
     rm -f basic
     rm -f qconsume
     rm -f main
-    rm -f 1p1c_qbr
-    rm -f 1p1c_qpro
+    rm -f qbread
+    rm -f qproduce
 

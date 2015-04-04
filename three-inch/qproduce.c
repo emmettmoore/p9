@@ -16,7 +16,7 @@ void main(void)
 	char src[ENTSIZE ];
 	char dest[ENTSIZE];
 
-	print("1p1c_qpro starting\n");
+	print("qproduce starting\n");
 	for(i = 0; i < ENTSIZE; i++)
 		src[i] = '!' + i;
 	src[ENTSIZE - 1] = '\0';
@@ -43,6 +43,6 @@ void main(void)
 				fprintf(stderr, "P: qproduce returned %d, expecting %d\n", val, ENTSIZE);
 		}
 		waitpid();
-		print("1p1c_qpro complete\n");
+		print("qproduce complete\n");
 	}
 }

@@ -234,8 +234,10 @@ iunlock(Lock *l)
 Block*
 iallocb(int size)
 {
-	Block *b = nil;
+    return allocb(size);
+
 	/*
+	Block *b = nil;
 	static int m1, m2, mp;
 
 	if(ialloc.bytes > conf.ialloc){
@@ -267,8 +269,8 @@ iallocb(int size)
 	ilock(&ialloc);
 	ialloc.bytes += b->lim - b->base;
 	iunlock(&ialloc);
-	*/
 	return b;
+	*/
 }
 
 void
