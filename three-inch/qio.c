@@ -471,35 +471,46 @@ Block*
 qget(Queue *q)
 {
 	int dowakeup;
-	Block *head = q->bfirst;
-	Block *tail = q->blast;
-	Block *next = head->next;
+	Block *head;
+	Block *tail;
+	Block *next;
     Block *ret;
 	/* sync with qwrite */
-	ilock(q);
+	ilock(q); // XXX
 
-    if (head == q->bfirst) {
-        if (head == tail) {
-            if (next == nil) { 
-                /* queue is empty */
-                q->state |= Qstarve;
-                iunlock(q);
-                return nil;
-            } 
-            /* cas(&q->blast, tail, next); */ /* not needed for dummy node step */
-        }
-        else {
-            ret = copyblock(next, BLEN(next));
-            q->bfirst = next;
-            /* don't need to clear contents of new head b/c its dummy,
-             * but do need to free it.
-             */
-            freeb(head);
-            q->len -= BALLOC(next);
-            q->dlen -= BLEN(next);
-            QDEBUG checkb(next, "qget");
+    for(;;){
+        head = q->bfirst;
+        tail = q->blast;
+        next = head->next;
+         if (head == q->bfirst) {
+            if (head == tail) {
+                if (next == nil) { 
+                    /* queue is empty */
+                    q->state |= Qstarve;
+                    iunlock(q); // XXX
+                    return nil;
+                } 
+                cas(&q->blast, tail, next); /* swing tail */
+            }
+            else {
+                ret = copyblock(next, BLEN(next));
+                if (cas(&q->bfirst, head, next)) { /* dequeue */
+                    break;
+                }
+                freeb(ret);
+            }
         }
     }
+
+    /* don't need to clear contents of new head b/c its dummy,
+     * but do need to free old head.
+     */
+    freeb(head);
+    /* XXX ilock these ops? */
+    q->len -= BALLOC(next);
+    q->dlen -= BLEN(next);
+    /* XXX iunlock? */
+    QDEBUG checkb(next, "qget");
 
 	/* if writer flow controlled, restart */
 	if((q->state & Qflow) && q->len < q->limit/2){
