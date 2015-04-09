@@ -478,6 +478,8 @@ qget(Queue *q)
 	/* sync with qwrite */
 	ilock(q); // XXX
 
+    ret = qremove(q);
+    /*
     for(;;){
         head = q->bfirst;
         tail = q->blast;
@@ -485,32 +487,27 @@ qget(Queue *q)
          if (head == q->bfirst) {
             if (head == tail) {
                 if (next == nil) { 
-                    /* queue is empty */
+                  // queue is empty
                     q->state |= Qstarve;
                     iunlock(q); // XXX
                     return nil;
                 } 
-                cas(&q->blast, tail, next); /* swing tail */
+                cas(&q->blast, tail, next); // swing tail
             }
             else {
                 ret = copyblock(next, BLEN(next));
-                if (cas(&q->bfirst, head, next)) { /* dequeue */
+                if (cas(&q->bfirst, head, next)) { // dequeue
                     break;
                 }
                 freeb(ret);
             }
         }
     }
+    */
 
     /* don't need to clear contents of new head b/c its dummy,
      * but do need to free old head.
      */
-    freeb(head);
-    /* XXX ilock these ops? */
-    q->len -= BALLOC(next);
-    q->dlen -= BLEN(next);
-    /* XXX iunlock? */
-    QDEBUG checkb(next, "qget");
 
 	/* if writer flow controlled, restart */
 	if((q->state & Qflow) && q->len < q->limit/2){
@@ -993,20 +990,43 @@ qaddlist(Queue *q, Block *b)
 Block*
 qremove(Queue *q)
 {
-	Block *head = q->bfirst;
+	Block *head;
+	Block *tail;
 	Block *next;
 	Block *ret;
 	if(q->bfirst == q->blast) /* queue empty */
 		return nil;
-	next = q->bfirst->next;
-	head->next = nil;
-    ret = copyblock(next, BLEN(next));
-	q->bfirst = next;
+    for (;;){
+        head = q->bfirst;
+        tail = q->blast;
+        next = head->next;
+        if (head == q->bfirst) {
+            if (head == tail) {
+                if (next == nil) {
+                    /* queue is empty */
+                    q->state |= Qstarve;
+                    iunlock(q); // XXX
+                    return nil;
+                }
+                cas(&q->blast, tail, next); /* swing tail */
+            } 
+            else {
+                ret = copyblock(next, BLEN(next));
+                if (cas(&q->bfirst, head, next)) { /* dequeue */
+                    break;
+                }
+                freeb(ret);
+            }
+        }
+    }
+
 
     freeb(head);
-	q->dlen -= BLEN(next);
-	q->len -= BALLOC(next);
-	QDEBUG checkb(ret, "qremove");
+    /* XXX ilock these ops? */
+    q->len -= BALLOC(next);
+    q->dlen -= BLEN(next);
+    /* XXX iunlock? */
+    QDEBUG checkb(ret, "qremove");
 	return ret;
 }
 
