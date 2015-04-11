@@ -479,32 +479,6 @@ qget(Queue *q)
 	ilock(q); // XXX
 
     ret = qremove(q);
-    /*
-    for(;;){
-        head = q->bfirst;
-        tail = q->blast;
-        next = head->next;
-         if (head == q->bfirst) {
-            if (head == tail) {
-                if (next == nil) { 
-                  // queue is empty
-                    q->state |= Qstarve;
-                    iunlock(q); // XXX
-                    return nil;
-                } 
-                cas(&q->blast, tail, next); // swing tail
-            }
-            else {
-                ret = copyblock(next, BLEN(next));
-                if (cas(&q->bfirst, head, next)) { // dequeue
-                    break;
-                }
-                freeb(ret);
-            }
-        }
-    }
-    */
-
     /* don't need to clear contents of new head b/c its dummy,
      * but do need to free old head.
      */
@@ -983,6 +957,54 @@ qaddlist(Queue *q, Block *b)
 		b = b->next;
 	q->blast = b;
 }
+/* similar to qremove, but doesn't actually return data.
+ * gets rid of heading blocks with length > 0
+ * and returns remaining queue.
+ */
+void
+qcompress(Queue *q)
+{
+	Block *head;
+	Block *tail;
+	Block *next;
+	Block *ret;
+	if(q->bfirst == q->blast) /* queue empty */
+		return;
+    for (;;){
+        head = q->bfirst;
+        tail = q->blast;
+        next = head->next;
+        if (head == q->bfirst) {
+            if (head == tail) {
+                if (next == nil) {
+                    /* queue is empty */
+                    q->state |= Qstarve;
+                    iunlock(q); // XXX
+                    return nil; /* failure */
+                }
+                cas(&q->blast, tail, next); /* swing tail */
+            } 
+            else {
+                ret = copyblock(next, BLEN(next));
+                if (cas(&q->bfirst, head, next)) { /* dequeue */
+                    if (BLEN(ret) > 0) {
+                        break;
+                    }
+                }
+                freeb(ret);
+            }
+        }
+    }
+
+
+    freeb(head);
+    /* XXX ilock these ops? */
+    q->len -= BALLOC(next);
+    q->dlen -= BLEN(next);
+    /* XXX iunlock? */
+    QDEBUG checkb(ret, "qremove");
+	return ret;
+}
 
 /*
  *  called with q ilocked
@@ -1200,7 +1222,6 @@ qread(Queue *q, void *vp, int len)
 		nexterror();
 	}
 	ilock(q);
-again:
 	switch(qwait(q)){
 	case 0:
 		/* queue closed */
@@ -1213,15 +1234,7 @@ again:
 		iunlock(q);
 		error(q->err);
 	}
-	/* if we get here, there's at least one block in the queue */
-	if(q->state & Qcoalesce){
-		/* when coalescing, 0 length blocks just go away */
-		b = q->bfirst;
-		if(BLEN(b) <= 0){
-			freeb(qremove(q));
-			goto again;
-		}
-
+		
 		/*
 		 * grab the first block and as many following
 		 * blocks as will partially fit in the read
@@ -1230,9 +1243,9 @@ again:
 		l = &first;
 		for(;;) {
 			*l = qremove(q);
-			l = &b->next;
+			l = &b->next; // does this make sense XXX no.
 			n += BLEN(b);
-			if(n >= len || (b = q->bfirst) == nil)
+			if(n >= len || (b = q->bfirst) == q->blast)
 				break;
 		}
 	} else {
