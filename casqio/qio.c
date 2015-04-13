@@ -52,10 +52,10 @@ casqopen()
 
 	/* add dummy node */
 	dummy = allocb(0);
-	if(waserror()) {
-		freeb(dummy);
-		nexterror();
-	}
+//	if(waserror()) { // TODO: see if we need error handling stuff.
+//		freeb(dummy);//       if we do there should be a poperror()
+//		nexterror();
+//	}
 	q->bfirst = dummy;
 	q->blast = q->bfirst;
 	dummy->next = nil;
@@ -66,10 +66,7 @@ casqopen()
 Block*
 casqget(CasQueue *q)
 {
-	Block *head;
-	Block *tail;
-	Block *next;
-	Block *ret;
+	Block *head, *tail, *next, *b;
 	if(q->bfirst == q->blast) /* queue empty */
 		return nil;
 	for (;;){
@@ -78,32 +75,30 @@ casqget(CasQueue *q)
 		next = head->next;
 		if (head == q->bfirst) {
 			if (head == tail) {
-				if (next == nil) {
+				if (next == nil)
 					return nil;
-				}
 				cas(&q->blast, tail, next); /* swing tail */
-			} 
-			else {
-				ret = copyblock(next, BLEN(next));
-				if (cas(&q->bfirst, head, next)) { /* dequeue */
+			} else {
+				b = copyblock(next, BLEN(next)); // TODO see if we can move copyblock out of loop
+				if (cas(&q->bfirst, head, next)) /* dequeue */
 					break;
-				}
-				freeb(ret);
+				freeb(b);
 			}
 		}
 	}
 
 	freeb(head);
-	ilock(q);
+	ilock(q); // TODO use cas here to avoid locking
 	q->len -= BALLOC(next);
-	q->dlen -= BLEN(next);
 	iunlock(q);
-	QDEBUG checkb(ret, "casqget");
-	return ret;
+	QDEBUG checkb(b, "casqget");
+	return b;
 }
 
 /*
  * called when no more reads or writes will happen
+ * TODO: might be able to improve interface with a "closed" state
+ * then may not have to be sure reads/writes are done in order to close/free
  */
 void
 casqfree(CasQueue *q)
@@ -132,3 +127,9 @@ casqsetlimit(CasQueue *q, int limit)
 {
 	q->limit = limit;
 }
+
+// TODO what will we be using for our enqueue function?
+// there is no function to enqueue a single block.
+// maybe qpass?
+// or maybe a new function, casqput which just adds a single block
+// qproduce also seems within reach (allocating blocks before enqueueing to get to a certain length isn't an issue)
