@@ -78,7 +78,7 @@ casqenqueue(CasQueue *q, Block *b) {
         next = tail->next;
         if (tail == q->blast) {
             if (next == nil) {
-                next->relsize = tail->relsize + BALLOC(b);
+                b->relsize = tail->relsize + BALLOC(b);
                 if (cas(&tail->next, next, b)) {
                     break;
                 }
@@ -128,7 +128,7 @@ casqdequeue(CasQueue *q)
 ulong
 casqueuesize(CasQueue *q)
 {
-    return q->blast - q->bfirst;
+    return q->blast->relsize - q->bfirst->relsize;
 }
 
 /*
@@ -148,7 +148,6 @@ casqfree(CasQueue *q)
 	bfirst = q->bfirst;
 	q->bfirst = 0;
 	q->len = 0;
-	iunlock(q);
 
 	/* free queued blocks */
 	freeblist(bfirst);
