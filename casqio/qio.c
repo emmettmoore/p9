@@ -147,7 +147,7 @@ casqput(CasQueue *q, Block *b) {
     b->next = 0;
     for(;;) {
         tail = q->blast;
-        next = tail->next
+        next = tail->next;
         if (tail == q->blast) {
             if (next == nil) {
                 if cas(&tail->next, next, node) {
@@ -157,11 +157,11 @@ casqput(CasQueue *q, Block *b) {
                     break;
                 }
             } else {
-                cas(&q->blast, tail, next)
+                cas(&q->blast, tail, next);
             }
         }
     }
-    cas(q->blast, tail, node)
+    cas(q->blast, tail, node);
 }
 
 
