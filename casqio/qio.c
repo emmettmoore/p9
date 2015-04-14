@@ -133,3 +133,34 @@ casqsetlimit(CasQueue *q, int limit)
 // maybe qpass?
 // or maybe a new function, casqput which just adds a single block
 // qproduce also seems within reach (allocating blocks before enqueueing to get to a certain length isn't an issue)
+
+
+
+/*
+ * casqput, based on algorithm. 
+ */ 
+void
+casqput(CasQueue *q, Block *b) {
+    Block *tail, *next, *node;
+    
+    b->next = 0;
+    for(;;) {
+        tail = q->blast;
+        next = tail->next
+        if (tail == q->blast) {
+            if (next == nil) {
+                if cas(&tail->next, next, node) {
+                    ilock(q); // TODO use cas here to avoid locking
+                    q->len += BALLOC(next);
+                    iunlock(q);
+                    break;
+                }
+            } else {
+                cas(&q->blast, tail, next)
+            }
+        }
+    }
+    cas(q->blast, tail, node)
+}
+
+
