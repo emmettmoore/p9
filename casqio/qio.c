@@ -137,7 +137,8 @@ casqsetlimit(CasQueue *q, int limit)
 
 
 /*
- * casqput, based on algorithm. 
+ * Enqueues one block to the end of the queue
+ * Based on non-blocking algo 
  */ 
 void
 casqput(CasQueue *q, Block *b) {
