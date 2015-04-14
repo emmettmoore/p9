@@ -161,6 +161,8 @@ struct Block
 	uchar*	lim;			/* 1 past the end of the buffer */
 	uchar*	base;			/* start of the buffer */
 	void	(*free)(Block*);
+    ulong   relsize;        /* Used to determine casqueue size. Total accumulated size.
+                             * Wraps around when exceeds max ulong size. */
 	ushort	flag;
 	ushort	checksum;		/* IP checksum of complete packet (minus media header) */
 };

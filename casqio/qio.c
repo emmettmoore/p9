@@ -6,7 +6,7 @@ stuff we don't care about:
 want to return -1 when writing to full queue:
 ilock(q);
 if(q->len > q->limit)
-	full = 1;
+full = 1;
 iunlock(q);
 
 if(full)
@@ -58,13 +58,42 @@ casqopen()
 //	}
 	q->bfirst = dummy;
 	q->blast = q->bfirst;
+    q->relsize = 0;
 	dummy->next = nil;
 
 	return q;
 }
 
+/*
+ * Enqueues one block to the end of the queue
+ * Based on non-blocking algo 
+ */ 
+void
+casqenqueue(CasQueue *q, Block *b) {
+    Block *tail, *next;
+    
+    b->next = 0;
+    for(;;) {
+        tail = q->blast;
+        next = tail->next;
+        if (tail == q->blast) {
+            if (next == nil) {
+                next->relsize = tail->relsize + BALLOC(b);
+                if (cas(&tail->next, next, b)) {
+                    break;
+                }
+            } else {
+                cas(&q->blast, tail, next);
+            }
+        }
+    }
+    cas(&q->blast, tail, node);
+}
+
+
+
 Block*
-casqget(CasQueue *q)
+casqdequeue(CasQueue *q)
 {
 	Block *head, *tail, *next, *b;
 	if(q->bfirst == q->blast) /* queue empty */
@@ -88,11 +117,18 @@ casqget(CasQueue *q)
 	}
 
 	freeb(head);
-	ilock(q); // TODO use cas here to avoid locking
 	q->len -= BALLOC(next);
-	iunlock(q);
 	// QDEBUG checkb(b, "casqget");
 	return b;
+}
+
+/* Returns size of queue. Guaranteed to be accurate within
+ * one block (i.e. if tail is falling behind)
+ */
+ulong
+casqueuesize(CasQueue *q)
+{
+    return q->blast - q->bfirst;
 }
 
 /*
@@ -134,34 +170,5 @@ casqsetlimit(CasQueue *q, int limit)
 // or maybe a new function, casqput which just adds a single block
 // qproduce also seems within reach (allocating blocks before enqueueing to get to a certain length isn't an issue)
 
-
-
-/*
- * Enqueues one block to the end of the queue
- * Based on non-blocking algo 
- */ 
-void
-casqput(CasQueue *q, Block *b) {
-    Block *tail, *next, *node;
-    
-    b->next = 0;
-    for(;;) {
-        tail = q->blast;
-        next = tail->next;
-        if (tail == q->blast) {
-            if (next == nil) {
-                if (cas(&tail->next, next, node)) {
-                    ilock(q); // TODO use cas here to avoid locking
-                    q->len += BALLOC(next);
-                    iunlock(q);
-                    break;
-                }
-            } else {
-                cas(&q->blast, tail, next);
-            }
-        }
-    }
-    cas(q->blast, tail, node);
-}
 
 
