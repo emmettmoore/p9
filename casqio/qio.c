@@ -91,7 +91,7 @@ casqget(CasQueue *q)
 	ilock(q); // TODO use cas here to avoid locking
 	q->len -= BALLOC(next);
 	iunlock(q);
-	QDEBUG checkb(b, "casqget");
+	// QDEBUG checkb(b, "casqget");
 	return b;
 }
 
@@ -150,7 +150,7 @@ casqput(CasQueue *q, Block *b) {
         next = tail->next;
         if (tail == q->blast) {
             if (next == nil) {
-                if cas(&tail->next, next, node) {
+                if (cas(&tail->next, next, node)) {
                     ilock(q); // TODO use cas here to avoid locking
                     q->len += BALLOC(next);
                     iunlock(q);
