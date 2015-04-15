@@ -13,8 +13,9 @@ void main(void)
 {
 	int pid, val, i;
 	char c;
-	char src[ENTSIZE ];
+	char src[ENTSIZE];
 	char dest[ENTSIZE];
+    Block *b; 
 
 	print("1p1c starting\n");
 	for(i = 0; i < ENTSIZE; i++)
@@ -29,14 +30,15 @@ void main(void)
 		abort();
 	case 0: /* child: consumer */
 		for(i = 0; i < NENTS; i++){
-			b = casqdequeue(q);
+			b = casqget(q);
             print("dest: %s", b->rp);
 		}
 		break;
 	default: /* parent: producer */
 		for(i = 0; i < NENTS; i++){
             sprint(src, "this is the contents of block %d\n", i);
-			val = casqenqueue(q, src, ENTSIZE);
+            b = allocb(ENTSIZE);
+			casqput(q, b);
 		}
 		waitpid();
 		print("1p1c complete\n");
