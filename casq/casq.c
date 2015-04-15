@@ -1,6 +1,8 @@
+#define THREEINCH
 #include "stuff.h"
 
-char Ehungup[30] = "i/o on hungup channel";
+
+extern char Ehungup[30];
 
 /*
  *  lock-free queue. only simple enqueue/dequeue of blocks,
@@ -25,7 +27,7 @@ struct CasQueue
  *  queue before it is used by multiple processes. Right?
  */
 CasQueue*
-casqopen()
+casqopen(int limit)
 {
 	CasQueue *q;
 	Block *dummy;
@@ -42,10 +44,11 @@ casqopen()
 //	}
 	q->bfirst = dummy;
 	q->blast = q->bfirst;
-    q->relsize = 0;
+    dummy->relsize = 0;
 	dummy->next = nil;
 
 	q->closed = 0;
+    q->limit = limit;
 
 	return q;
 }
@@ -54,7 +57,7 @@ casqopen()
  * Enqueues one block to the end of the queue
  * Based on non-blocking algo 
  */ 
-void
+int
 casqput(CasQueue *q, Block *b) {
     Block *tail, *next;
     
@@ -63,6 +66,9 @@ casqput(CasQueue *q, Block *b) {
 
     b->next = 0;
     for(;;) {
+        if (q->len > q->limit) {
+            return -1;
+        }
         tail = q->blast;
         next = tail->next;
         if (tail == q->blast) {
@@ -76,7 +82,9 @@ casqput(CasQueue *q, Block *b) {
             }
         }
     }
-    cas(&q->blast, tail, node);
+    cas(&q->blast, tail, b);
+    return BALLOC(b);
+
 }
 
 
