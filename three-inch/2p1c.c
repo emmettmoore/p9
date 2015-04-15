@@ -28,8 +28,9 @@ void main(void)
 		fprintf(stderr, "ABORT!\n");
 		abort();
 	case 0: /* child: consumer */
-		for(i = 0; i < NENTS; i++){
+		for(i = 0; i < NENTS*2; i++){
 			val = qread(q, dest, ENTSIZE);
+            print("dest: %s\n", dest);
 			if(val != ENTSIZE)
 				fprintf(stderr, "C: qread returned %d, expecting %d\n", val, ENTSIZE);
 		}
@@ -41,6 +42,7 @@ void main(void)
 			abort();
 		case 0: /* child: producer */
 			for(i = 0; i < NENTS; i++){
+                sprintf(src, "P1: %d", i, ENTSIZE);
 				val = qwrite(q, src, ENTSIZE);
 				if(val != ENTSIZE)
 					fprintf(stderr, "P1: qwrite returned %d, expecting %d\n", val, ENTSIZE);
@@ -48,6 +50,7 @@ void main(void)
 			break;
 		default: /* parent: producer */
 			for(i = 0; i < NENTS; i++){
+                sprintf(src, "P2: %d", i, ENTSIZE);
 				val = qwrite(q, src, ENTSIZE);
 				if(val != ENTSIZE)
 					fprintf(stderr, "P2: qwrite returned %d, expecting %d\n", val, ENTSIZE);
