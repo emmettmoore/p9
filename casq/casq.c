@@ -1,27 +1,10 @@
-/*
-stuff we don't care about:
-- Qflow
-- wakeup stuff
-- q->state and state stuff
-want to return -1 when writing to full queue:
-ilock(q);
-if(q->len > q->limit)
-full = 1;
-iunlock(q);
-
-if(full)
-	return -1;
-*/
-
-#define THREEINCH
 #include "stuff.h"
 
 char Ehungup[30] = "i/o on hungup channel";
 
-
 /*
- *  non-locking IO queue. Fewer features than Queue, but faster in simple concurrent
- *  structures.
+ *  lock-free queue. only simple enqueue/dequeue of blocks,
+ *  but faster with multiple readers/writers
  */
 typedef struct CasQueue	CasQueue;
 
@@ -34,6 +17,7 @@ struct CasQueue
 
 	int	len;		/* bytes allocated to queue */
 	int	limit;		/* max bytes in queue */
+	int	closed;
 };
 
 /*
@@ -61,6 +45,8 @@ casqopen()
     q->relsize = 0;
 	dummy->next = nil;
 
+	q->closed = 0;
+
 	return q;
 }
 
@@ -69,9 +55,12 @@ casqopen()
  * Based on non-blocking algo 
  */ 
 void
-casqenqueue(CasQueue *q, Block *b) {
+casqput(CasQueue *q, Block *b) {
     Block *tail, *next;
     
+	if(q->closed)
+		error(Ehungup);
+
     b->next = 0;
     for(;;) {
         tail = q->blast;
@@ -93,9 +82,13 @@ casqenqueue(CasQueue *q, Block *b) {
 
 
 Block*
-casqdequeue(CasQueue *q)
+casqget(CasQueue *q)
 {
 	Block *head, *tail, *next, *b;
+
+	if(q->closed)
+		error(Ehungup);
+
 	if(q->bfirst == q->blast) /* queue empty */
 		return nil;
 	for (;;){
@@ -126,15 +119,22 @@ casqdequeue(CasQueue *q)
  * one block (i.e. if tail is falling behind)
  */
 ulong
-casqueuesize(CasQueue *q)
+casqsize(CasQueue *q)
 {
     return q->blast->relsize - q->bfirst->relsize;
 }
 
 /*
- * called when no more reads or writes will happen
- * TODO: might be able to improve interface with a "closed" state
- * then may not have to be sure reads/writes are done in order to close/free
+ * writers and readers not guaranteed to be done when this returns
+ */
+void
+casqclose(CasQueue *q)
+{
+	q->closed = 1;
+}
+
+/*
+ * call after casqclose, after remaining readers and writers are synced
  */
 void
 casqfree(CasQueue *q)
@@ -144,13 +144,7 @@ casqfree(CasQueue *q)
 	if(q == nil)
 		return;
 
-	/* mark it */
-	bfirst = q->bfirst;
-	q->bfirst = 0;
-	q->len = 0;
-
-	/* free queued blocks */
-	freeblist(bfirst);
+	freeblist(q->bfirst);
 	free(q);
 }
 
@@ -162,12 +156,4 @@ casqsetlimit(CasQueue *q, int limit)
 {
 	q->limit = limit;
 }
-
-// TODO what will we be using for our enqueue function?
-// there is no function to enqueue a single block.
-// maybe qpass?
-// or maybe a new function, casqput which just adds a single block
-// qproduce also seems within reach (allocating blocks before enqueueing to get to a certain length isn't an issue)
-
-
 
