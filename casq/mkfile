@@ -3,14 +3,14 @@ all:V: 1p1c 2p1c 1p2c 2p2c
 1p1c: casq.5 stuff.5 1p1c.5 qio.5
 	5l -o 1p1c casq.5 stuff.5 1p1c.5 qio.5
 
-2p1c: casq.5 stuff.5 2p1c.5
-    5l -o 2p1c casq.5 stuff.5 2p1c.5
+2p1c: casq.5 stuff.5 2p1c.5 qio.5
+    5l -o 2p1c casq.5 stuff.5 2p1c.5 qio.5
 
-1p2c: casq.5 stuff.5 1p2c.5
-    5l -o 1p2c casq.5 stuff.5 1p2c.5
+1p2c: casq.5 stuff.5 1p2c.5 qio.5
+    5l -o 1p2c casq.5 stuff.5 1p2c.5 qio.5
 
-2p2c: casq.5 stuff.5 2p2c.5
-    5l -o 2p2c casq.5 stuff.5 2p2c.5
+2p2c: casq.5 stuff.5 2p2c.5 qio.5
+    5l -o 2p2c casq.5 stuff.5 2p2c.5 qio.5
 
 casq.5: casq.c stuff.h stuff.c error.h fns.h portfns.h mem.h lib/libc.h lib/u.h dat.h portdat.h
 	5c casq.c

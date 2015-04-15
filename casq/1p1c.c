@@ -7,7 +7,6 @@
 #define ENTSIZE 64
 
 long sleepsem = 0;
-extern Block* allocb(int size);
 
 Proc *up;
 void main(void)

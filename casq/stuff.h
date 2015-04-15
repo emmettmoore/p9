@@ -1,7 +1,7 @@
 #include    "lib/u.h"
 #include	"lib/libc.h"
 #define KNAMELEN 28 /* from lib.h */
-#define SLEEP(x) for(i=0; i<77*x; i++) {print(" \b");}
+#define SLEEP(x) for(sleep_i=0; sleep_i<77*x; sleep_i++) {print(" \b");}
 #include	"mem.h"
 #include	"dat.h"
 #include	"fns.h" // XXX Why not fns.h?
