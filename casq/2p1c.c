@@ -2,7 +2,7 @@
 #include "stuff.h"
 #include <stdio.h>
 
-#define NENTS 10
+#define NENTS 100
 #define QLIMIT 256*1024
 #define ENTSIZE 64
 
@@ -15,8 +15,7 @@ void main(void)
 	char c;
 	char src[ENTSIZE];
 	char dest[ENTSIZE];
-    Block *b; 
-
+	Block *b; 
 	print("2p1c starting\n");
 	CasQueue *q = casqopen(QLIMIT);
 
@@ -27,11 +26,10 @@ void main(void)
 	case 0: /* child: consumer */
 		for(i = 0; i < NENTS * 2; i++){
 			b = casqget(q);
-            if (b == nil) {
-                i--;
-            } else {
-                print("dest: %s", b->rp);
-            }
+			if (b == nil)
+				i--;
+			else
+				fprintf(stderr, "dest: %s", b->rp);
 		}
 		break;
 	default: /* parent: producer */
@@ -41,20 +39,20 @@ void main(void)
 			abort();
 		case 0: /* child: producer */
 			for(i = 0; i < NENTS; i++){
-                sprint(src, "P1: this is the contents of block %d\n", i);
-                b = allocb(ENTSIZE);
-                memmove(b->wp, src, ENTSIZE);
-                b->wp += ENTSIZE;
-                casqput(q, b);
+				snprint(src, 40, "P1: this is the contents of block %d\n", i);
+				b = allocb(ENTSIZE);
+				memmove(b->wp, src, ENTSIZE);
+				b->wp += ENTSIZE;
+				casqput(q, b);
 			}
 			break;
 		default: /* parent: producer */
 			for(i = 0; i < NENTS; i++){
-                sprint(src, "P2: this is the contents of block %d\n", i);
-                b = allocb(ENTSIZE);
-                memmove(b->wp, src, ENTSIZE);
-                b->wp += ENTSIZE;
-                casqput(q, b);
+				snprint(src, 40, "P2: this is the contents of block %d\n", i);
+				b = allocb(ENTSIZE);
+				memmove(b->wp, src, ENTSIZE);
+				b->wp += ENTSIZE;
+				casqput(q, b);
 			}
 			waitpid();
 			waitpid();
