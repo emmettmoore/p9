@@ -1,0 +1,115 @@
+.TH CASQIO 9
+.SH NAME
+casqget, casqput, casqopen, casqfree, casqclose, casqsize, casqsetlimit \- nonblocking queued I/O for devices
+.SH SYNOPSIS
+.PP
+.B CasQueue* casqopen(int limit)
+.PP
+.B Block* casqget(CasQueue *q) 
+.PP
+.B int casqput(CasQueue *q, Block *b) 
+.PP
+.B ulong casqsize(CasQueue *q)
+.PP
+.B void casqfree(CasQueue *q) 
+.PP
+.B void casqclose(CasQueue *q) 
+.PP
+.B void casqsetlimit(CasQueue *q, int limit)
+.PP
+.B extern Block* allocb(int size)
+.PP
+.B
+.fi
+.SH DESCRIPTION
+This suite of functions provides a
+nonblocking alternative to the serial
+data buffering for device drivers used in /sys/src/9/port/qio.c.
+Data is stored in a 
+.B CasQueue 
+structure as a sequence of variable sized
+.B Blocks;
+see
+.I allocb(9).
+.PP
+The CasQueue is a lightweight alternative to
+Queue. The casq interface is less featureful than
+the qio interface, but is non-blocking and 
+potentially faster. Enqueue and dequeue operations 
+utilize the compare-and-swap (cas) atomic operation 
+present on most Plan 9 compatible hardware to guarantee safety. 
+.PP
+CasQueues are initialized with a dummy node such that the
+head of CasQueue (bfirst) always points to the dummy.
+The blast field points either to the last element in the 
+node or the second to last element in the node. More details on
+this implementation can be found in the link included below.
+.TP
+.B casqopen
+initializes and returns a pointer to a new
+.B CasQueue,
+with
+.I limit
+setting the queue limit (high water mark) in bytes. 
+The queue is initialized with bfirst and blast both
+pointing to a dummy node.
+.TP
+.B casqget
+dequeues and returns the first "live" (non-dummy)
+.B Block
+on 
+.B q.
+If 
+.B q
+is empty, it returns nil.
+If 
+.B q
+is closed, it calls 
+.B error(Ehungup).
+.TP
+.B casqput
+enqueues 
+.B b 
+to the end of the 
+.B q.
+and returns the number of bytes enqueued. If 
+.B q
+is closed, it calls 
+.B error(Ehungup).
+If 
+.B q->len > q->limit
+, it returns -1.
+.TP
+.B casqsize 
+returns the total number of bytes
+allocated to the blocks in
+.B q. 
+Because q->blast can lag behind the
+tail by at most one one block, casqsize is 
+accurate within one block (the tail specifically).
+.TP
+.B casqfree
+Frees any remaining blocks from 
+.B q 
+(including the dummy) and then frees the q itself.
+Should only be called once the q is safely closed
+and no processes are still writing to and reading from
+.B q.
+.TP
+.B casqclose
+ Sets q->close to 1.
+.TP
+.B casqsetlimit
+resets the limit of the 
+.B q
+to
+.B limit
+
+SOURCE
+.PP
+.B /sys/src/9/port/casq.c
+
+.SH SEE ALSO
+.PP
+.I allocb(9),
+http://www.cs.rochester.edu/u/scott/papers/1996_PODC_queues.pdf
