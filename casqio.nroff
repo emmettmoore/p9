@@ -46,52 +46,52 @@ node or the second to last element in the node. More details on
 this implementation can be found in the link included below.
 .TP
 .B casqopen
-.R initializes and returns a pointer to a new
+initializes and returns a pointer to a new
 .B CasQueue,
-.R with
+with
 .I limit
-.R setting the queue limit (high water mark) in bytes. 
+setting the queue limit (high water mark) in bytes. 
 The queue is initialized with bfirst and blast both
 pointing to a dummy node.
 .TP
 .B casqget
-.R dequeues and returns the first "live" (non-dummy)
+dequeues and returns the first "live" (non-dummy)
 .B Block
-.R on 
+on 
 .B q.
-.R If 
+If 
 .B q
-.R is empty, it returns nil.
-.R If 
+is empty, it returns nil.
+If 
 .B q
-.R is closed, it calls 
+is closed, it calls 
 .B error(Ehungup).
 .TP
 .B casqput
-.R enqueues 
+enqueues 
 .B b 
 to the end of the 
 .B q.
-.R and returns the number of bytes enqueued. If 
+and returns the number of bytes enqueued. If 
 .B q
-.R is closed, it calls 
+is closed, it calls 
 .B error(Ehungup).
-.R If 
+If 
 .B q->len > q->limit
-.R , it returns -1.
+, it returns -1.
 .TP
 .B casqsize 
 returns the total number of bytes
 allocated to the blocks in
 .B q. 
-.R Because q->blast can lag behind the
+Because q->blast can lag behind the
 tail by at most one one block, casqsize is 
 accurate within one block (the tail specifically).
 .TP
 .B casqfree
-.R Frees any remaining blocks from 
+Frees any remaining blocks from 
 .B q 
-.R (including the dummy) and then frees the q itself.
+(including the dummy) and then frees the q itself.
 Should only be called once the q is safely closed
 and no processes are still writing to and reading from
 .B q.
