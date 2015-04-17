@@ -1,7 +1,14 @@
 #define THREEINCH
 #include "stuff.h"
 
+#define PTRSCREEN 0x1FFFFFFF
+#define PTRLEN    32
+#define PTRHDRLEN 3
 
+#define PTRGET(p)                   (p & PTRSCREEN)
+#define PTRPLUS(p)                  (p + 1 << (PTRLEN - PTRHDRLEN))
+#define PTRCOUNT(p1)                (p & ~(PTRSCREEN))
+#define PTRCOMBINE(p1, p2)          ((p1 & PTRSCREEN) & (PTRCOUNT(p2)))
 extern char Ehungup[30];
 
 /*
@@ -111,6 +118,7 @@ casqget(CasQueue *q)
 			} else {
 				b = copyblock(next, BLEN(next)); // TODO see if we can move copyblock out of loop
 				if (cas(&q->bfirst, head, next)) /* dequeue */
+                    //call ptrcombine(next, tail)
 					break;
 				freeb(b);
 			}
