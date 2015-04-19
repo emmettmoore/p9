@@ -39,16 +39,12 @@ casqopen(int limit)
 	CasQueue *q;
 	Block *dummy;
 
-	q = malloc(sizeof(CasQueue));
+	q = malloc(sizeof(*q));
 	if(q == 0)
 		return 0;
 
 	/* add dummy node */
 	dummy = allocb(0);
-//	if(waserror()) { // TODO: see if we need error handling stuff.
-//		freeb(dummy);//       if we do there should be a poperror()
-//		nexterror();
-//	}
 	q->bfirst = dummy;
 	q->blast = q->bfirst;
 	dummy->next = nil;
