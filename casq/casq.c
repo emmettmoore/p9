@@ -5,10 +5,10 @@
 #define PTRLEN    32
 #define PTRHDRLEN 3
 
-#define PTRGET(p)                   (p & PTRSCREEN)
-#define PTRPLUS(p)                  (p + 1 << (PTRLEN - PTRHDRLEN))
-#define PTRCOUNT(p1)                (p & ~(PTRSCREEN))
-#define PTRCOMBINE(p1, p2)          ((p1 & PTRSCREEN) & (PTRCOUNT(p2)))
+#define PTR(p)            (p & PTRSCREEN)
+#define PTRPLUS(p)             (p + (1 << (PTRLEN - PTRHDRLEN)))
+#define PTRCOUNT(p1)           (p & ~(PTRSCREEN))
+#define PTRCOMBINE(p1, p2)     (p1 & (PTRCOUNT(PTRPLUS(p2))))
 extern char Ehungup[30];
 
 /*
@@ -77,19 +77,19 @@ casqput(CasQueue *q, Block *b) {
             return -1;
         }
         tail = q->blast;
-        next = tail->next;
+        next = PTR(tail)->next;
         if (tail == q->blast) {
-            if (next == nil) {
+            if (PTR(next) == nil) {
                 b->relsize = tail->relsize + BALLOC(b);
-                if (cas(&tail->next, next, b)) {
+                if (cas(&PTR(tail)->next, next, PTRCOMBINE(PTR(b), next))) {
                     break;
                 }
             } else {
-                cas(&q->blast, tail, next);
+                cas(&q->blast, tail, PTRCOMBINE(PTR(next), tail));
             }
         }
     }
-    cas(&q->blast, tail, b);
+    cas(&q->blast, tail, PTRCOMBINE(PTR(b), tail));
     return BALLOC(b);
 
 }
@@ -104,31 +104,31 @@ casqget(CasQueue *q)
 	if(q->closed)
 		error(Ehungup);
 
-	if(q->bfirst == q->blast) /* queue empty */
+	if(PTR(q->bfirst) == PTR(q->blast)) /* queue empty */
 		return nil;
 	for (;;){
 		head = q->bfirst;
 		tail = q->blast;
 		next = head->next;
 		if (head == q->bfirst) {
-			if (head == tail) {
-				if (next == nil)
+			if (PTR(head) == PTR(tail)) {
+				if (PTR(next) == nil)
 					return nil;
-				cas(&q->blast, tail, next); /* swing tail */
+				cas(&q->blast, tail, PTRCOMBINE(PTR(next), tail)); /* swing tail */
 			} else {
-				b = copyblock(next, BLEN(next)); // TODO see if we can move copyblock out of loop
-				if (cas(&q->bfirst, head, next)) /* dequeue */
+				b = copyblock(PTR(next), BLEN(PTR(next))); // TODO see if we can move copyblock out of loop
+				if (cas(&q->bfirst, head, PTRCOMBINE(PTR(next), head))) /* dequeue */
                     //call ptrcombine(next, tail)
 					break;
-				freeb(b);
+				freeb(PTR(b));
 			}
 		}
 	}
 
-	freeb(head);
-	q->len -= BALLOC(next);
+	freeb(PTR(head));
+	q->len -= BALLOC(PTR(next));
 	// QDEBUG checkb(b, "casqget");
-	return b;
+	return PTR(b);
 }
 
 /* Returns size of queue. Guaranteed to be accurate within
