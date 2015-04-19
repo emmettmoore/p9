@@ -6,7 +6,9 @@
 Proc*
 wakeup(Rendez *r)
 {
+//print("wakeing up!\n");
 	Proc *p = nil;
+	return p;
 
 	lock(r);
 	p = r->p;
@@ -24,7 +26,7 @@ wakeup(Rendez *r)
 	}
 	unlock(r);
 
-
+//print("woke up!\n");
 	return p;
 }
 
@@ -39,10 +41,10 @@ wakeup(Rendez *r)
  * /port/proc.c
  */
 void
-sleep(Rendez *r, int (*f)(void*), void *arg)
+k_sleep(Rendez *r, int (*f)(void*), void *arg)
 {
-    Proc* currp = malloc(sizeof(*currp)); // XXX TODO XXX spoof "current process" AKA up
-    //currp->pid = getpid();
+	Proc* currp = malloc(sizeof(*currp)); // XXX TODO XXX spoof "current process" AKA up
+	//currp->pid = getpid();
 	lock(r);
 	lock(&currp->rlock);
 	if(r->p){
@@ -219,15 +221,37 @@ allocb(int size)
 void
 ilock(Lock *l)
 {
-	(void) l;
-}
+//print("ilockin!\n");
+	ulong x;
+	uintptr pc;
 
+	if(l == nil)
+		panic("ilock nil %#p", pc);
+
+//print("l->key: %x\n", l->key);
+	if(_tas(&l->key) != 0){
+		for(;;){
+			while(l->key)
+				;
+			if(_tas(&l->key) == 0)
+				goto acquire;
+		}
+	}
+acquire:
+	l->isilock = 1;
+//print("ilocked!\n");
+}
 
 /* /9/port/taslock.c */
 void
 iunlock(Lock *l)
 {
-	(void) l;
+        if(l->key == 0)
+                print("iunlock: not locked: pc %#p\n", getcallerpc(&l));
+        if(!l->isilock)
+                print("iunlock of lock: pc %#p, held by %#p\n", getcallerpc(&l), l->pc);
+        l->m = nil;
+        l->key = 0;
 }
 
 /* /9/port/allocb.c */
