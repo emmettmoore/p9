@@ -1,5 +1,6 @@
 *.swp
 .DS_Store
+prof.*
 *.5
 *.6
 5.out

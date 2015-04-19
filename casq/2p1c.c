@@ -2,7 +2,7 @@
 #include "stuff.h"
 #include <stdio.h>
 
-#define NENTS 20000
+#define NENTS 20
 #define QLIMIT 256*1024
 #define ENTSIZE 64
 
