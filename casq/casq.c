@@ -132,7 +132,7 @@ casqget(CasQueue *q)
 	len = BALLOC(b);
 	for(;;) {
 		qlen = q->len;
-		if(cas(&q->len, qlen, qlen + len))
+		if(cas(&q->len, qlen, qlen - len))
 			break;
 	}
 
