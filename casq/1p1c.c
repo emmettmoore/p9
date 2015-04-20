@@ -40,7 +40,7 @@ void main(void)
             b = allocb(ENTSIZE);
             memmove(b->wp, src, ENTSIZE);
             b->wp += ENTSIZE;
-			casqput(q, b);
+			val = casqput(q, b);
 		}
 		waitpid();
 		print("1p1c complete\n");

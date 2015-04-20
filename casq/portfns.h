@@ -338,7 +338,7 @@ void		setrealloctag(void*, ulong);
 void		setregisters(Ureg*, char*, char*, int);
 void		setswapchan(Chan*);
 char*		skipslash(char*);
-void		sleep(Rendez*, int(*)(void*), void*);
+void		k_sleep(Rendez*, int(*)(void*), void*);
 void*		smalloc(ulong);
 int		splhi(void);
 int		spllo(void);

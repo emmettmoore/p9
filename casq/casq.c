@@ -41,16 +41,12 @@ casqopen(int limit)
 	CasQueue *q;
 	Block *dummy;
 
-	q = malloc(sizeof(CasQueue));
+	q = malloc(sizeof(*q));
 	if(q == 0)
 		return 0;
 
 	/* add dummy node */
 	dummy = allocb(0);
-//	if(waserror()) { // TODO: see if we need error handling stuff.
-//		freeb(dummy);//       if we do there should be a poperror()
-//		nexterror();
-//	}
 	q->bfirst = dummy;
 	q->blast = q->bfirst;
 	dummy->next = nil;
@@ -68,15 +64,16 @@ casqopen(int limit)
 int
 casqput(CasQueue *q, Block *b) {
     Block *tail, *next;
+	int len, qlen;
     
 	if(q->closed)
 		error(Ehungup);
 
+	len = BALLOC(b);
     b->next = 0;
     for(;;) {
-        if (q->len > q->limit) {
+        if (q->len > q->limit)
             return -1;
-        }
         tail = q->blast;
         next = PTR(tail)->next;
         if (tail == q->blast) {
@@ -90,15 +87,23 @@ casqput(CasQueue *q, Block *b) {
         }
     }
     cas(&q->blast, tail, PTRCOMBINE(PTR(b), tail));
-    return BALLOC(PTR(b));
+
+	/* atomic replacement for q->len += BALLOC(b) */
+	len = BALLOC(PTR(b));
+	for(;;) {
+		qlen = q->len;
+		if(cas(&q->len, qlen, qlen + len))
+			break;
+	}
+
+    return len;
 }
-
-
 
 Block*
 casqget(CasQueue *q)
 {
 	Block *head, *tail, *next, *b;
+	int len, qlen;
 
 	if(q->closed)
 		error(Ehungup);
@@ -115,16 +120,31 @@ casqget(CasQueue *q)
 					return nil;
 				cas(&q->blast, tail, PTRCOMBINE(PTR(next), tail)); /* swing tail */
 			} else {
-				b = copyblock(PTR(next), BLEN(PTR(next))); // TODO see if we can move copyblock out of loop
+				b = copyblock(PTR(next), BLEN(PTR(next)));
 				if (cas(&q->bfirst, head, PTRCOMBINE(PTR(next), head))) /* dequeue */
-                    //call ptrcombine(next, tail)
 					break;
 				freeb(PTR(b));
 			}
 		}
 	}
 	freeb(PTR(head));
-	return PTR(b);
+
+	/* atomic replacement for q->len -= BALLOC(b) */
+	len = BALLOC(b);
+	for(;;) {
+		qlen = q->len;
+		if(cas(&q->len, qlen, qlen - len))
+			break;
+	}
+
+	return b;
+}
+
+/* may not be up to date if there are reads/writes in progress */
+int
+casqsize(CasQueue *q)
+{
+    return q->len;
 }
 
 /*

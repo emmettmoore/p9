@@ -38,7 +38,7 @@ typedef void IntrHandler(Ureg*, void*);
 
 struct Lock
 {
-	ulong	key;
+	int	key;
 	ulong	sr;
 	ulong	pc;
 	Proc	*p;
