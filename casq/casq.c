@@ -1,14 +1,25 @@
 #define THREEINCH
 #include "stuff.h"
+#include <stdio.h>
 
 #define PTRSCREEN 0x1FFFFFFF
 #define PTRLEN    32
 #define PTRHDRLEN 3
 
-#define PTR(p)            (p & PTRSCREEN)
-#define PTRPLUS(p)             (p + (1 << (PTRLEN - PTRHDRLEN)))
-#define PTRCOUNT(p1)           (p & ~(PTRSCREEN))
-#define PTRCOMBINE(p1, p2)     (p1 & (PTRCOUNT(PTRPLUS(p2))))
+#define PTRON
+#define PTR(p)                 ((Block*) ((int)p & PTRSCREEN))
+
+#ifdef PTRON
+#define PTRPLUS(p)             ((Block*) ((int)p +  (1 << (PTRLEN - PTRHDRLEN))))
+#define PTRCOUNT(p)           ((Block*) ((int)p & ~PTRSCREEN))
+#define PTRCOMBINE(p1, p2)     ((Block*) ((int)p1 | ((int) PTRCOUNT(PTRPLUS(p2)))))
+#endif
+#ifndef PTRON
+#define PTRPLUS(p)            (p)
+#define PTRCOUNT(p)           (p)
+#define PTRCOMBINE(p1, p2)    (p1)
+#endif
+
 extern char Ehungup[30];
 
 /*
@@ -77,10 +88,11 @@ casqput(CasQueue *q, Block *b) {
             return -1;
         }
         tail = q->blast;
-        next = PTR(tail)->next;
+        Block* intrmdt = PTR(tail);
+        next = intrmdt->next;
         if (tail == q->blast) {
             if (PTR(next) == nil) {
-                b->relsize = tail->relsize + BALLOC(b);
+                PTR(b)->relsize = PTR(tail)->relsize + BALLOC(PTR(b));
                 if (cas(&PTR(tail)->next, next, PTRCOMBINE(PTR(b), next))) {
                     break;
                 }
@@ -90,8 +102,7 @@ casqput(CasQueue *q, Block *b) {
         }
     }
     cas(&q->blast, tail, PTRCOMBINE(PTR(b), tail));
-    return BALLOC(b);
-
+    return BALLOC(PTR(b));
 }
 
 
@@ -109,7 +120,7 @@ casqget(CasQueue *q)
 	for (;;){
 		head = q->bfirst;
 		tail = q->blast;
-		next = head->next;
+		next = PTR(head)->next;
 		if (head == q->bfirst) {
 			if (PTR(head) == PTR(tail)) {
 				if (PTR(next) == nil)
