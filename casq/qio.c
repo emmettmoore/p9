@@ -936,7 +936,7 @@ qwait(Queue *q)
 		}
 		q->state |= Qstarve;	/* flag requesting producer to wake me */
 		iunlock(q);
-		sleep(&q->rr, notempty, q); // "sleep until the queue is not empty"
+		k_sleep(&q->rr, notempty, q); // "sleep until the queue is not empty"
 		ilock(q);
 	}
 	return 1;
@@ -1320,7 +1320,7 @@ qbwrite(Queue *q, Block *b)
 		ilock(q);
 		q->state |= Qflow;
 		iunlock(q);
-		sleep(&q->wr, qnotfull, q);
+		k_sleep(&q->wr, qnotfull, q);
 	}
 	USED(b);
 

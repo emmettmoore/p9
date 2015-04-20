@@ -39,10 +39,10 @@ wakeup(Rendez *r)
  * /port/proc.c
  */
 void
-sleep(Rendez *r, int (*f)(void*), void *arg)
+k_sleep(Rendez *r, int (*f)(void*), void *arg)
 {
-    Proc* currp = malloc(sizeof(*currp)); // XXX TODO XXX spoof "current process" AKA up
-    //currp->pid = getpid();
+	Proc* currp = malloc(sizeof(*currp)); // XXX TODO XXX spoof "current process" AKA up
+	//currp->pid = getpid();
 	lock(r);
 	lock(&currp->rlock);
 	if(r->p){

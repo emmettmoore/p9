@@ -11,7 +11,7 @@ typedef struct CasQueue CasQueue; //portdat.h
 CasQueue* casqopen(int limit); 
 Block* casqget(CasQueue *q); 
 int casqput(CasQueue *q, Block *b); 
-ulong casqsize(CasQueue *q);
+int casqsize(CasQueue *q);
 void casqfree(CasQueue *q); 
 void casqclose(CasQueue *q); 
 void casqsetlimit(CasQueue *q, int limit);

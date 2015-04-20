@@ -39,19 +39,14 @@ casqopen(int limit)
 	CasQueue *q;
 	Block *dummy;
 
-	q = malloc(sizeof(CasQueue));
+	q = malloc(sizeof(*q));
 	if(q == 0)
 		return 0;
 
 	/* add dummy node */
 	dummy = allocb(0);
-//	if(waserror()) { // TODO: see if we need error handling stuff.
-//		freeb(dummy);//       if we do there should be a poperror()
-//		nexterror();
-//	}
 	q->bfirst = dummy;
 	q->blast = q->bfirst;
-    dummy->relsize = 0;
 	dummy->next = nil;
 
 	q->closed = 0;
@@ -67,20 +62,19 @@ casqopen(int limit)
 int
 casqput(CasQueue *q, Block *b) {
     Block *tail, *next;
+	int len, qlen;
     
 	if(q->closed)
 		error(Ehungup);
 
     b->next = 0;
     for(;;) {
-        if (q->len > q->limit) {
+        if (q->len > q->limit)
             return -1;
-        }
         tail = q->blast;
         next = tail->next;
         if (tail == q->blast) {
             if (next == nil) {
-                b->relsize = tail->relsize + BALLOC(b);
                 if (cas(&tail->next, next, b)) {
                     break;
                 }
@@ -90,16 +84,23 @@ casqput(CasQueue *q, Block *b) {
         }
     }
     cas(&q->blast, tail, b);
-    return BALLOC(b);
 
+	/* atomic replacement for q->len += BALLOC(b) */
+	len = BALLOC(b);
+	for(;;) {
+		qlen = q->len;
+		if(cas(&q->len, qlen, qlen + len))
+			break;
+	}
+
+    return len;
 }
-
-
 
 Block*
 casqget(CasQueue *q)
 {
 	Block *head, *tail, *next, *b;
+	int len, qlen;
 
 	if(q->closed)
 		error(Ehungup);
@@ -126,18 +127,23 @@ casqget(CasQueue *q)
 	}
 
 	freeb(head);
-	q->len -= BALLOC(next);
-	// QDEBUG checkb(b, "casqget");
+
+	/* atomic replacement for q->len -= BALLOC(b) */
+	len = BALLOC(b);
+	for(;;) {
+		qlen = q->len;
+		if(cas(&q->len, qlen, qlen - len))
+			break;
+	}
+
 	return b;
 }
 
-/* Returns size of queue. Guaranteed to be accurate within
- * one block (i.e. if tail is falling behind)
- */
-ulong
+/* may not be up to date if there are reads/writes in progress */
+int
 casqsize(CasQueue *q)
 {
-    return q->blast->relsize - q->bfirst->relsize;
+    return q->len;
 }
 
 /*
