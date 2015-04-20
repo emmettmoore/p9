@@ -1,7 +1,6 @@
 #define THREEINCH
 #include "stuff.h"
 #include <stdio.h>
-#include <tos.h>
 
 #define NENTS 10
 #define QLIMIT 256*1024
@@ -12,7 +11,6 @@ long sleepsem = 0;
 Proc *up;
 void main(void)
 {
-    fprintf(stderr, "_tos as ulong: %x\n",  _tos);
 	int pid, val, i;
 	char c;
 	char src[ENTSIZE];

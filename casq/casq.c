@@ -6,19 +6,10 @@
 #define PTRLEN    32
 #define PTRHDRLEN 3
 
-#define PTRON
 #define PTR(p)                 ((Block*) ((int)p & PTRSCREEN))
-
-#ifdef PTRON
 #define PTRPLUS(p)             ((Block*) ((int)p +  (1 << (PTRLEN - PTRHDRLEN))))
 #define PTRCOUNT(p)           ((Block*) ((int)p & ~PTRSCREEN))
 #define PTRCOMBINE(p1, p2)     ((Block*) ((int)p1 | ((int) PTRCOUNT(PTRPLUS(p2)))))
-#endif
-#ifndef PTRON
-#define PTRPLUS(p)            (p)
-#define PTRCOUNT(p)           (p)
-#define PTRCOMBINE(p1, p2)    (p1)
-#endif
 
 extern char Ehungup[30];
 
@@ -62,7 +53,6 @@ casqopen(int limit)
 //	}
 	q->bfirst = dummy;
 	q->blast = q->bfirst;
-    dummy->relsize = 0;
 	dummy->next = nil;
 
 	q->closed = 0;
@@ -88,11 +78,9 @@ casqput(CasQueue *q, Block *b) {
             return -1;
         }
         tail = q->blast;
-        Block* intrmdt = PTR(tail);
-        next = intrmdt->next;
+        next = PTR(tail)->next;
         if (tail == q->blast) {
             if (PTR(next) == nil) {
-                PTR(b)->relsize = PTR(tail)->relsize + BALLOC(PTR(b));
                 if (cas(&PTR(tail)->next, next, PTRCOMBINE(PTR(b), next))) {
                     break;
                 }
@@ -135,20 +123,8 @@ casqget(CasQueue *q)
 			}
 		}
 	}
-
 	freeb(PTR(head));
-	q->len -= BALLOC(PTR(next));
-	// QDEBUG checkb(b, "casqget");
 	return PTR(b);
-}
-
-/* Returns size of queue. Guaranteed to be accurate within
- * one block (i.e. if tail is falling behind)
- */
-ulong
-casqsize(CasQueue *q)
-{
-    return q->blast->relsize - q->bfirst->relsize;
 }
 
 /*
