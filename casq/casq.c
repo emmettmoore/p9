@@ -1,14 +1,16 @@
 #define THREEINCH
 #include "stuff.h"
+#include <stdio.h>
 
 #define PTRSCREEN 0x1FFFFFFF
 #define PTRLEN    32
 #define PTRHDRLEN 3
 
-#define PTRGET(p)                   (p & PTRSCREEN)
-#define PTRPLUS(p)                  (p + 1 << (PTRLEN - PTRHDRLEN))
-#define PTRCOUNT(p1)                (p & ~(PTRSCREEN))
-#define PTRCOMBINE(p1, p2)          ((p1 & PTRSCREEN) & (PTRCOUNT(p2)))
+#define PTR(p)                 ((Block*) ((int)p & PTRSCREEN))
+#define PTRPLUS(p)             ((Block*) ((int)p +  (1 << (PTRLEN - PTRHDRLEN))))
+#define PTRCOUNT(p)           ((Block*) ((int)p & ~PTRSCREEN))
+#define PTRCOMBINE(p1, p2)     ((Block*) ((int)p1 | ((int) PTRCOUNT(PTRPLUS(p2)))))
+
 extern char Ehungup[30];
 
 /*
@@ -67,26 +69,27 @@ casqput(CasQueue *q, Block *b) {
 	if(q->closed)
 		error(Ehungup);
 
+	len = BALLOC(b);
     b->next = 0;
     for(;;) {
         if (q->len > q->limit)
             return -1;
         tail = q->blast;
-        next = tail->next;
+        next = PTR(tail)->next;
         if (tail == q->blast) {
-            if (next == nil) {
-                if (cas(&tail->next, next, b)) {
+            if (PTR(next) == nil) {
+                if (cas(&PTR(tail)->next, next, PTRCOMBINE(PTR(b), next))) {
                     break;
                 }
             } else {
-                cas(&q->blast, tail, next);
+                cas(&q->blast, tail, PTRCOMBINE(PTR(next), tail));
             }
         }
     }
-    cas(&q->blast, tail, b);
+    cas(&q->blast, tail, PTRCOMBINE(PTR(b), tail));
 
 	/* atomic replacement for q->len += BALLOC(b) */
-	len = BALLOC(b);
+	len = BALLOC(PTR(b));
 	for(;;) {
 		qlen = q->len;
 		if(cas(&q->len, qlen, qlen + len))
@@ -105,28 +108,26 @@ casqget(CasQueue *q)
 	if(q->closed)
 		error(Ehungup);
 
-	if(q->bfirst == q->blast) /* queue empty */
+	if(PTR(q->bfirst) == PTR(q->blast)) /* queue empty */
 		return nil;
 	for (;;){
 		head = q->bfirst;
 		tail = q->blast;
-		next = head->next;
+		next = PTR(head)->next;
 		if (head == q->bfirst) {
-			if (head == tail) {
-				if (next == nil)
+			if (PTR(head) == PTR(tail)) {
+				if (PTR(next) == nil)
 					return nil;
-				cas(&q->blast, tail, next); /* swing tail */
+				cas(&q->blast, tail, PTRCOMBINE(PTR(next), tail)); /* swing tail */
 			} else {
-				b = copyblock(next, BLEN(next)); // TODO see if we can move copyblock out of loop
-				if (cas(&q->bfirst, head, next)) /* dequeue */
-                    //call ptrcombine(next, tail)
+				b = copyblock(PTR(next), BLEN(PTR(next)));
+				if (cas(&q->bfirst, head, PTRCOMBINE(PTR(next), head))) /* dequeue */
 					break;
-				freeb(b);
+				freeb(PTR(b));
 			}
 		}
 	}
-
-	freeb(head);
+	freeb(PTR(head));
 
 	/* atomic replacement for q->len -= BALLOC(b) */
 	len = BALLOC(b);
