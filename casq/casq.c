@@ -31,10 +31,10 @@
  * Many functions could be ported from qio(9). Qwindow, qfull, and qhangup
  * (with q->inilim) would be easily implemented for casq. Qlen (with q->dlen)
  * could be implemented similarly to casqsize, with the same caviats about
- * up-to-dateness. Casqputnolim, an analogue to qpassnolim, could also be added
- * very easily. Any more complex read or write operations such as qbwrite and
- * qread would be much more difficult and may not be feasible to implement with
- * this lock-free algorithm.
+ * up-to-dateness. Casqputnolim, (like qpassnolim but only for single blocks)
+ * could also be added very easily. Any more complex read or write operations
+ * such as qbwrite and qread would be much more difficult and may not be
+ * feasible to implement with this lock-free algorithm.
  * - Caleb Malchik (cmalchiK@gmail.com)
  */
 
