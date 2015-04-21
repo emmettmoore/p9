@@ -46,18 +46,19 @@ potentially faster on multiprogrammed systems
 with many readers or writers.
 Get and put operations
 utilize an atomic compare-and-swap primitive
-to avoid locking; see
+to avoid locking, and the first block at the
+head of the queue is kept as a dummy node; see
 .IR atom (2)
 and the paper linked below.
-.TP
-.I casqopen
+.PP
+.I Casqopen
 initializes and returns a pointer to a new
 .B CasQueue,
 with
 .I limit
 setting the queue limit (high water mark) in bytes. 
-.TP
-.I casqget
+.PP
+.I Casqget
 dequeues and returns the first (non-dummy)
 .B Block
 on 
@@ -70,8 +71,8 @@ If
 is closed, it raises the
 .IR error (9)
 .B Ehungup.
-.TP
-.I casqput
+.PP
+.I Casqput
 enqueues 
 .I b 
 to the end of
@@ -82,14 +83,14 @@ If
 is full, it returns -1; if closed,
 .B Ehungup
 is raised.
-.TP
-.I casqsize 
+.PP
+.I Casqsize 
 returns the total number of bytes
 allocated to the blocks in
 .I q,
 accurate within one block.
-.TP
-.I casqclose
+.PP
+.I Casqclose
 marks
 .I q
 closed. Subsequent attempts to read or write will raise an
@@ -102,8 +103,8 @@ after the queue is closed.
 .I Casqfree
 may be called
 after readers and writers have finished.
-.TP
-.I casqfree
+.PP
+.I Casqfree
 Frees any queued blocks
 (including the dummy) and then frees
 .I q
@@ -112,8 +113,8 @@ itself. Should only be called once
 is safely closed
 and no processes are still writing to or reading from
 .I q.
-.TP
-.I casqsetlimit
+.PP
+.I Casqsetlimit
 resets the high water mark of the 
 .I q
 to
