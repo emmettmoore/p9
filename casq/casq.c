@@ -1,3 +1,43 @@
+/*
+ * TODO:
+ *   - move PTR stuff to its own file
+ *   - implement PTR for amd64 kernel (if time)
+ *   - review the code, make sure it adheres to the style guide
+ *       (tabs for indents, no unnecessary { }, etc.)
+ */
+/*
+ * This alternate concurrent queue was written by Caleb Malchik, Emmett Moore,
+ * and Dan Defossez for a senior capstone project at Tufts University. The
+ * algorithm is based on the paper ``Simple,  Fast,  and  Practical
+ * Non-Blocking and Blocking Concurrent Queue Algorithms'' by Maged M. Michael
+ * and Michael L. Scott:
+ * http://www.cs.rochester.edu/u/scott/papers/1996_PODC_queues.pdf
+ * It started as a rewrite of parts of qio(9), but the new algorithm proved
+ * incompatible with the qio interface. Also relys on some functions defined in
+ * qio.c.
+ *
+ * Things about the code to be aware of:
+ *  - Locks are not used, so the queue cannot be protected by locks.
+ *  - The first block on the queue, pointed to be bfirst, is a dummy node.
+ *  - blast does not always point to the last block in the list.
+ *
+ * The paper lists the following invariants necessary for safety:
+ *  1. The linked list is always connected.
+ *  2. Nodes are only inserted after the last node in the linked list.
+ *  3. Nodes are only deleted from the beginning of the linked list.
+ *  4. bfirst always points to the first node of the linked list (the dummy).
+ *  5. blast always points to a node in the linked list.
+ *
+ * Many functions could be ported from qio(9). Qwindow, qfull, and qhangup
+ * (with q->inilim) would be easily implemented for casq. Qlen (with q->dlen)
+ * could be implemented similarly to casqsize, with the same caviats about
+ * up-to-dateness. Casqputnolim, an analogue to qpassnolim, could also be added
+ * very easily. Any more complex read or write operations such as qbwrite and
+ * qread would be much more difficult and may not be feasible to implement with
+ * this lock-free algorithm.
+ * - Caleb Malchik (cmalchiK@gmail.com)
+ */
+
 #define THREEINCH
 #include "stuff.h"
 #include <stdio.h>
@@ -15,7 +55,7 @@ extern char Ehungup[30];
 
 /*
  *  lock-free queue. only simple enqueue/dequeue of blocks,
- *  but faster with multiple readers/writers
+ *  but faster with many readers/writers on multicore systems.
  */
 typedef struct CasQueue	CasQueue;
 
@@ -23,8 +63,8 @@ struct CasQueue
 {
 	Lock;
 
-	Block*	bfirst;		/* buffer */
-	Block*	blast;
+	Block*	bfirst;		/* dummy node */
+	Block*	blast;		/* not always the end of the list */
 
 	int	len;		/* bytes allocated to queue */
 	int	limit;		/* max bytes in queue */
@@ -32,8 +72,7 @@ struct CasQueue
 };
 
 /*
- *  Not necessarily needed to be ilocked... because only one process can open a 
- *  queue before it is used by multiple processes. Right?
+ * called by non-interrupt code
  */
 CasQueue*
 casqopen(int limit)
@@ -58,8 +97,7 @@ casqopen(int limit)
 }
 
 /*
- * Enqueues one block to the end of the queue
- * Based on non-blocking algo 
+ * enqueue a block
  */ 
 int
 casqput(CasQueue *q, Block *b) {
@@ -99,6 +137,9 @@ casqput(CasQueue *q, Block *b) {
     return len;
 }
 
+/*
+ * dequeue a block
+ */
 Block*
 casqget(CasQueue *q)
 {
@@ -140,7 +181,9 @@ casqget(CasQueue *q)
 	return b;
 }
 
-/* may not be up to date if there are reads/writes in progress */
+/*
+ * may not be up to date if there are reads/writes in progress
+ */
 int
 casqsize(CasQueue *q)
 {
