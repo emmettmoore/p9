@@ -1,0 +1,134 @@
+.TH CASQ 9
+.SH NAME
+casq: casqget, casqput, casqopen, casqfree, casqclose, casqsize, casqsetlimit \- non-blocking queued I/O for devices
+.SH SYNOPSIS
+.PP
+.ta \w'\fLCasQueue*  'u
+.B
+CasQueue* casqopen(int limit)
+.PP
+.B
+Block* casqget(CasQueue *q) 
+.PP
+.B
+int casqput(CasQueue *q, Block *b) 
+.PP
+.B
+int casqsize(CasQueue *q)
+.PP
+.B
+void casqclose(CasQueue *q) 
+.PP
+.B
+void casqfree(CasQueue *q) 
+.PP
+.B
+void casqsetlimit(CasQueue *q, int limit)
+.SH DESCRIPTION
+This suite of functions provides a
+nonblocking alternative to
+.IR qio (9).
+Data is stored in a 
+.B CasQueue 
+structure as a sequence of variable sized
+.BR Blocks;
+see
+.IR allocb (9).
+.PP
+The 
+.B CasQueue
+is a lightweight alternative to
+.B Queue.
+This interface is less featureful than
+.IR qio (9),
+but is non-blocking and 
+potentially faster on multiprogrammed systems
+with many readers or writers.
+Get and put operations
+utilize an atomic compare-and-swap primitive
+to avoid locking; see
+.IR atom (2)
+and the paper linked below.
+.TP
+.I casqopen
+initializes and returns a pointer to a new
+.B CasQueue,
+with
+.I limit
+setting the queue limit (high water mark) in bytes. 
+.TP
+.I casqget
+dequeues and returns the first (non-dummy)
+.B Block
+on 
+.I q.
+If 
+.I q
+is empty, it returns a null pointer.
+If 
+.I q
+is closed, it raises the
+.IR error (9)
+.B Ehungup.
+.TP
+.I casqput
+enqueues 
+.I b 
+to the end of
+.I q
+and returns the number of bytes written if successful.
+If
+.I q
+is full, it returns -1; if closed,
+.B Ehungup
+is raised.
+.TP
+.I casqsize 
+returns the total number of bytes
+allocated to the blocks in
+.I q,
+accurate within one block.
+.TP
+.I casqclose
+marks
+.I q
+closed. Subsequent attempts to read or write will raise an
+.IR error (9).
+Blocks are not freed as in
+.IR qio (9)'s
+qclose,
+because read or write operations may still be finishing
+after the queue is closed.
+.I Casqfree
+may be called
+after readers and writers have finished.
+.TP
+.I casqfree
+Frees any queued blocks
+(including the dummy) and then frees
+.I q
+itself. Should only be called once 
+.I q
+is safely closed
+and no processes are still writing to or reading from
+.I q.
+.TP
+.I casqsetlimit
+resets the high water mark of the 
+.I q
+to
+.I limit.
+
+.SH SOURCE
+.PP
+.B /sys/src/9/port/casq.c
+
+.SH SEE ALSO
+.IR qio (9),
+.IR allocb (9),
+.IR cas (2)
+
+Maged M. Michael and Michael L. Scott,
+``Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms''
+.br
+.B http://www.cs.rochester.edu/u/scott/papers/1996_PODC_queues.pdf
