@@ -1,8 +1,5 @@
 /*
  * TODO:
- *   - implement PTR for amd64 kernel (if time)
- *   - review the code, make sure it adheres to the style guide
- *       (tabs for indents, no unnecessary { }, etc.)
  *   - be sure to get rid of THREEINCH wherever possible
  */
 /*
@@ -21,7 +18,7 @@
  *  - The first block on the queue, pointed to be bfirst, is a dummy node.
  *  - blast does not always point to the last block in the list.
  *  - modification counters are stored in unused bits of pointers to blocks,
- *    to avoid the ABA problem. See macros in ptr.h.
+ *	to avoid the ABA problem. See macros in ptr.h.
  *
  * The paper lists the following invariants necessary for safety:
  *  1. The linked list is always connected.
@@ -85,7 +82,7 @@ casqopen(int limit)
 	dummy->next = nil;
 
 	q->closed = 0;
-    q->limit = limit;
+	q->limit = limit;
 
 	return q;
 }
@@ -95,30 +92,28 @@ casqopen(int limit)
  */ 
 int
 casqput(CasQueue *q, Block *b) {
-    Block *tail, *next;
+	Block *tail, *next;
 	int len, qlen;
-    
+	
 	if(q->closed)
 		error(Ehungup);
 
 	len = BALLOC(b);
-    b->next = 0;
-    for(;;) {
-        if (q->len > q->limit)
-            return -1;
-        tail = q->blast;
-        next = PTR(tail)->next;
-        if (tail == q->blast) {
-            if (PTR(next) == nil) {
-                if (cas(&PTR(tail)->next, next, PTRCOMBINE(PTR(b), next))) {
-                    break;
-                }
-            } else {
-                cas(&q->blast, tail, PTRCOMBINE(PTR(next), tail));
-            }
-        }
-    }
-    cas(&q->blast, tail, PTRCOMBINE(PTR(b), tail));
+	b->next = 0;
+	for(;;) {
+		if (q->len > q->limit)
+			return -1;
+		tail = q->blast;
+		next = PTR(tail)->next;
+		if (tail == q->blast) {
+			if (PTR(next) == nil
+				if (cas(&PTR(tail)->next, next, PTRCOMBINE(PTR(b), next)))
+					break;
+			else
+				cas(&q->blast, tail, PTRCOMBINE(PTR(next), tail));
+		}
+	}
+	cas(&q->blast, tail, PTRCOMBINE(PTR(b), tail));
 
 	/* atomic replacement for q->len += BALLOC(b) */
 	len = BALLOC(PTR(b));
@@ -128,7 +123,7 @@ casqput(CasQueue *q, Block *b) {
 			break;
 	}
 
-    return len;
+	return len;
 }
 
 /*
@@ -181,7 +176,7 @@ casqget(CasQueue *q)
 int
 casqsize(CasQueue *q)
 {
-    return q->len;
+	return q->len;
 }
 
 /*
