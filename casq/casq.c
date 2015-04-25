@@ -1,9 +1,9 @@
 /*
  * TODO:
- *   - move PTR stuff to its own file
  *   - implement PTR for amd64 kernel (if time)
  *   - review the code, make sure it adheres to the style guide
  *       (tabs for indents, no unnecessary { }, etc.)
+ *   - be sure to get rid of THREEINCH wherever possible
  */
 /*
  * This alternate concurrent queue was written by Caleb Malchik, Emmett Moore,
@@ -42,16 +42,8 @@
 
 #define THREEINCH
 #include "stuff.h"
+#include "ptr.h"
 #include <stdio.h>
-
-#define PTRSCREEN 0x1FFFFFFF
-#define PTRLEN    32
-#define PTRHDRLEN 3
-
-#define PTR(p)                 ((Block*) ((int)p & PTRSCREEN))
-#define PTRPLUS(p)             ((Block*) ((int)p +  (1 << (PTRLEN - PTRHDRLEN))))
-#define PTRCOUNT(p)           ((Block*) ((int)p & ~PTRSCREEN))
-#define PTRCOMBINE(p1, p2)     ((Block*) ((int)p1 | ((int) PTRCOUNT(PTRPLUS(p2)))))
 
 extern char Ehungup[30];
 
