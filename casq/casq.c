@@ -20,6 +20,8 @@
  *  - Locks are not used, so the queue cannot be protected by locks.
  *  - The first block on the queue, pointed to be bfirst, is a dummy node.
  *  - blast does not always point to the last block in the list.
+ *  - modification counters are stored in unused bits of pointers to blocks,
+ *    to avoid the ABA problem. See macros in ptr.h.
  *
  * The paper lists the following invariants necessary for safety:
  *  1. The linked list is always connected.
