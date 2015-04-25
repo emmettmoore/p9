@@ -2,7 +2,7 @@
 #include "stuff.h"
 #include <stdio.h>
 
-#define NENTS 20
+#define NENTS 10
 #define QLIMIT 256*1024
 #define ENTSIZE 64
 
@@ -16,7 +16,7 @@ void main(void)
 	char src[ENTSIZE];
 	char dest[ENTSIZE];
 	Block *b; 
-//	print("2p1c starting\n");
+	print("2p1c starting\n");
 	CasQueue *q = casqopen(QLIMIT);
 
 	switch(pid = rfork(RFPROC|RFMEM)){
@@ -28,10 +28,9 @@ void main(void)
 			b = casqget(q);
 			if (b == nil)
 				i--;
-//			else
-//				fprintf(stderr, "dest: %s", b->rp);
+			else
+				fprintf(stderr, "dest: %s", b->rp);
 		}
-//		fprintf(stderr, "consumer cputime: %f\n", cputime());
 		break;
 	default: /* parent: producer */
 		switch(pid = rfork(RFPROC|RFMEM)){
@@ -46,7 +45,6 @@ void main(void)
 				b->wp += ENTSIZE;
 				casqput(q, b);
 			}
-//			fprintf(stderr, "P1 cputime: %f\n", cputime());
 			break;
 		default: /* parent: producer */
 			for(i = 0; i < NENTS; i++){
@@ -56,11 +54,9 @@ void main(void)
 				b->wp += ENTSIZE;
 				casqput(q, b);
 			}
-//			fprintf(stderr, "P2 cputime before wait: %f\n", cputime());
 			waitpid();
 			waitpid();
-//			fprintf(stderr, "P2 cputime after wait: %f\n", cputime());
-//			print("2p1c complete\n");
+			print("2p1c complete\n");
 		}
 	}
 }

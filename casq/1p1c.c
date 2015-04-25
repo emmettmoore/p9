@@ -15,7 +15,7 @@ void main(void)
 	char c;
 	char src[ENTSIZE];
 	char dest[ENTSIZE];
-    Block *b; 
+	Block *b; 
 
 	print("1p1c starting\n");
 	CasQueue *q = casqopen(QLIMIT);
@@ -27,19 +27,18 @@ void main(void)
 	case 0: /* child: consumer */
 		for(i = 0; i < NENTS; i++){
 			b = casqget(q);
-            if (b == nil) {
-                i--;
-            } else {
-                print("dest: %s", b->rp);
-            }
+			if (b == nil)
+				i--;
+			else
+				print("dest: %s", b->rp);
 		}
 		break;
 	default: /* parent: producer */
 		for(i = 0; i < NENTS; i++){
-            sprint(src, "this is the contents of block %d\n", i);
-            b = allocb(ENTSIZE);
-            memmove(b->wp, src, ENTSIZE);
-            b->wp += ENTSIZE;
+			sprint(src, "this is the contents of block %d\n", i);
+			b = allocb(ENTSIZE);
+			memmove(b->wp, src, ENTSIZE);
+			b->wp += ENTSIZE;
 			val = casqput(q, b);
 		}
 		waitpid();

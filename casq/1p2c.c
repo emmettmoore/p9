@@ -30,7 +30,7 @@ void main(void)
 	case 0: /* child: consumer */
 		for(i = 0; i < NENTS; i++){
 			val = qread(q, dest, ENTSIZE);
-//			print("consumer1 dest: %s", dest);
+			print("consumer1 dest: %s", dest);
 			if(val != ENTSIZE)
 				fprintf(stderr, "C1: qread returned %d, expecting %d\n", val, ENTSIZE);
 		}
@@ -43,14 +43,14 @@ void main(void)
 			case 0: /* second consumer */
 				for(i = 0; i < NENTS; i++){
 					val = qread(q, dest, ENTSIZE);
-//					print("consumer2 dest: %s", dest);
+					print("consumer2 dest: %s", dest);
 					if(val != ENTSIZE)
 						fprintf(stderr, "C2: qread returned %d, expecting %d\n", val, ENTSIZE);
 				}
 				break;
 			default: /* parent: producer */
 				for(i = 0; i < 2*NENTS; i++){
-                    sprint(src, "this is the contents of block %d\n", i);
+					sprint(src, "this is the contents of block %d\n", i);
 					val = qwrite(q, src, ENTSIZE);
 					if(val != ENTSIZE)
 						fprintf(stderr, "P: qwrite returned %d, expecting %d\n", val, ENTSIZE);

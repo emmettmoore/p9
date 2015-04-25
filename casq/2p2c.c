@@ -34,7 +34,7 @@ void main(void)
 		case 0: /* child2: consumer */
 			for(i = 0; i < NENTS; i++){
 				val = qread(q, dest, ENTSIZE);
-//				print("consumer2 dest: %s", dest);
+				print("consumer2 dest: %s", dest);
 				if(val != ENTSIZE)
 					fprintf(stderr, "C2: qread returned %d, expecting %d\n", val, ENTSIZE);
 			}
@@ -42,7 +42,7 @@ void main(void)
 		default: /* child1: consumer */
 			for(i = 0; i < NENTS; i++){
 				val = qread(q, dest, ENTSIZE);
-//				print("consumer1 dest: %s", dest);
+				print("consumer1 dest: %s", dest);
 				if(val != ENTSIZE)
 					fprintf(stderr, "C1: qread returned %d, expecting %d\n", val, ENTSIZE);
 			}
@@ -56,7 +56,7 @@ void main(void)
 			abort();
 		case 0: /* child: producer */
 			for(i = 0; i < NENTS; i++){
-                sprint(src, "P1: this is the contents of block %d\n", i);
+				sprint(src, "P1: this is the contents of block %d\n", i);
 				val = qwrite(q, src, ENTSIZE);
 				if(val != ENTSIZE)
 					fprintf(stderr, "P1: qwrite returned %d, expecting %d\n", val, ENTSIZE);
@@ -64,12 +64,11 @@ void main(void)
 			break;
 		default: /* parent: producer */
 			for(i = 0; i < NENTS; i++){
-                sprint(src, "P2: this is the contents of block %d\n", i);
+				sprint(src, "P2: this is the contents of block %d\n", i);
 				val = qwrite(q, src, ENTSIZE);
 				if(val != ENTSIZE)
 					fprintf(stderr, "P2: qwrite returned %d, expecting %d\n", val, ENTSIZE);
 			}
-
 			waitpid();
 			waitpid();
 			print("2p2c complete\n");
