@@ -6,6 +6,7 @@ at the top of casq.c. I'll just describe here what each file is.
 
 casq.c - code for casq interface
 casq.9 - man page
+qio.c - code for old qio interface, as compiled in userspace
 ?p?c - tests with 1 or 2 consumers or producers. can be used to measure
   userspace performance if you comment out the print statements and
   increase NENTS.
