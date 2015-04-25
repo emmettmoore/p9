@@ -1,0 +1,15 @@
+Lock-Free Concurrent Queue Algorithm
+Dan Defossez, Caleb Malchik, and Emmett Moore
+
+The interface is described in casq.9 and the code is discussed in a big comment
+at the top of casq.c. I'll just describe here what each file is.
+
+casq.c - code for casq interface
+casq.9 - man page
+?p?c - tests with 1 or 2 consumers or producers. can be used to measure
+  userspace performance if you comment out the print statements and
+  increase NENTS.
+{dat,error,fns,mem,portdat,portfns}.h, lib/ - from kernel, modified for userspace
+stuff.h - some extra kernel things, and struct/fn definitions that would be in
+  portdat/portfns in the kernel
+stuff.c - reimplementations of some kernel functions for userspace. messy.
