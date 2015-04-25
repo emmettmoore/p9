@@ -1,8 +1,4 @@
 /*
- * TODO:
- *   - be sure to get rid of THREEINCH wherever possible
- */
-/*
  * This alternate concurrent queue was written by Caleb Malchik, Emmett Moore,
  * and Dan Defossez for a senior capstone project at Tufts University. The
  * algorithm is based on the paper ``Simple,  Fast,  and  Practical
@@ -36,8 +32,6 @@
  * feasible to implement with this lock-free algorithm.
  * - Caleb Malchik (cmalchiK@gmail.com)
  */
-
-#define THREEINCH
 #include "stuff.h"
 #include "ptr.h"
 #include <stdio.h>
@@ -106,7 +100,7 @@ casqput(CasQueue *q, Block *b) {
 		tail = q->blast;
 		next = PTR(tail)->next;
 		if (tail == q->blast) {
-			if (PTR(next) == nil
+			if (PTR(next) == nil)
 				if (cas(&PTR(tail)->next, next, PTRCOMBINE(PTR(b), next)))
 					break;
 			else

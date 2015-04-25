@@ -1,4 +1,3 @@
-#define THREEINCH
 #include "stuff.h"
 #include <stdio.h>
 

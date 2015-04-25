@@ -1,4 +1,3 @@
-#define THREEINCH
 #include "stuff.h"
 
 /* /port/proc.c * */
