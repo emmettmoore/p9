@@ -15,3 +15,5 @@ lib/ - userspace libs that needed to be modified to be included with kernel stuf
 stuff.h - some extra kernel things, and struct/fn definitions that would be in
   portdat/portfns in the kernel
 stuff.c - reimplementations of some kernel functions for userspace. messy.
+ptr.h - macros for storing counter in unused pointer bits (for userspace)
+ptr.h.kernel - ptr.h for use in amd64 kernel
